@@ -1,0 +1,158 @@
+{
+  "id": "cleaning",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    617,
+    420
+  ],
+  "scale": 1.01,
+  "roll": -1.25,
+  "face": [
+    -7,
+    -6,
+    -0.52,
+    -0.12,
+    1
+  ],
+  "fit": 1.82,
+  "action": "cleaning",
+  "layers": [
+    {
+      "name": "身体与服装底层",
+      "file": "body.png",
+      "motion": "body",
+      "rect": [
+        123,
+        213,
+        1115,
+        1307
+      ]
+    },
+    {
+      "name": "白色围裙与荷叶边",
+      "file": "apron.png",
+      "motion": "apron",
+      "rect": [
+        765,
+        769,
+        1050,
+        1131
+      ]
+    },
+    {
+      "name": "左肩荷叶边",
+      "file": "ruffle-left.png",
+      "motion": "lace",
+      "rect": [
+        407,
+        417,
+        498,
+        549
+      ]
+    },
+    {
+      "name": "右肩荷叶边",
+      "file": "ruffle-right.png",
+      "motion": "lace",
+      "rect": [
+        732,
+        420,
+        820,
+        549
+      ]
+    },
+    {
+      "name": "膝上手掌与手指",
+      "file": "hand-right.png",
+      "motion": "rest",
+      "rect": [
+        529,
+        567,
+        655,
+        628
+      ],
+      "pivot": [
+        593,
+        598
+      ]
+    },
+    {
+      "name": "掸子、握柄手与前臂",
+      "file": "clean-grip.png",
+      "motion": "cleanGrip",
+      "rect": [
+        91,
+        181,
+        450,
+        810
+      ]
+    },
+    {
+      "name": "Dust_01",
+      "file": "dust.png",
+      "motion": "dust-0",
+      "rect": [
+        -0.5,
+        -0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Dust_02",
+      "file": "dust.png",
+      "motion": "dust-1",
+      "rect": [
+        -0.5,
+        -0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Dust_03",
+      "file": "dust.png",
+      "motion": "dust-2",
+      "rect": [
+        -0.5,
+        -0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Dust_04",
+      "file": "dust.png",
+      "motion": "dust-3",
+      "rect": [
+        -0.5,
+        -0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "Dust_05",
+      "file": "dust.png",
+      "motion": "dust-4",
+      "rect": [
+        -0.5,
+        -0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "White maid bonnet",
+      "file": "maid-bonnet.png",
+      "motion": "maidBonnet",
+      "rect": [
+        414,
+        55,
+        819,
+        291
+      ]
+    }
+  ]
+}

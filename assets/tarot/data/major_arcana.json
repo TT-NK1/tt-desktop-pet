@@ -1,0 +1,552 @@
+[
+  {
+    "id": "00_The_Fool",
+    "number": 0,
+    "name_cn": "愚者",
+    "name_en": "The Fool",
+    "image_path": "handdrawn/major_arcana/cards/00_The_Fool.png",
+    "upright_keywords": [
+      "启程",
+      "尝试",
+      "开放"
+    ],
+    "reversed_keywords": [
+      "冲动",
+      "犹疑",
+      "准备不足"
+    ],
+    "upright_meaning": "给可能性留一个入口。你可以先走一小步，在行动里认识新方向。",
+    "reversed_meaning": "仔细区分勇气和仓促。如果迟迟迈不开步，也可以先把尝试缩小到可承受的范围。",
+    "love_meaning": "用轻松的邀请开启交流，给彼此自由回应的余地。",
+    "study_meaning": "挑一项陌生知识做二十分钟入门练习。",
+    "work_meaning": "先做可逆的原型，明确试错成本。",
+    "mood_meaning": "新鲜感值得期待，也可以承认自己有点紧张。",
+    "daily_advice": "为想尝试的事写下一步和退出条件。",
+    "tt_message": "迈一小步就好，我陪你慢慢看。"
+  },
+  {
+    "id": "01_The_Magician",
+    "number": 1,
+    "name_cn": "魔术师",
+    "name_en": "The Magician",
+    "image_path": "handdrawn/major_arcana/cards/01_The_Magician.png",
+    "upright_keywords": [
+      "资源",
+      "表达",
+      "行动"
+    ],
+    "reversed_keywords": [
+      "分心",
+      "手段失衡",
+      "潜力闲置"
+    ],
+    "upright_meaning": "把已经学会的东西组合起来。明确意图之后，手边的资源就有了用处。",
+    "reversed_meaning": "忙碌可能掩盖了方向不清。先核对承诺与能力，再决定如何集中精力。",
+    "love_meaning": "把真实需求说清楚，让行动和言语彼此一致。",
+    "study_meaning": "用已有工具做出一份小作品，复习会更具体。",
+    "work_meaning": "盘点三项可立即投入的资源，优先完成一件成果。",
+    "mood_meaning": "把关注点从表现转向你能选择的行动。",
+    "daily_advice": "用一句话写下目标，再为它安排一项实际行动。",
+    "tt_message": "你手里的东西已经能做出一点变化了。"
+  },
+  {
+    "id": "02_The_High_Priestess",
+    "number": 2,
+    "name_cn": "女祭司",
+    "name_en": "The High Priestess",
+    "image_path": "handdrawn/major_arcana/cards/02_The_High_Priestess.png",
+    "upright_keywords": [
+      "直觉",
+      "安静",
+      "观察"
+    ],
+    "reversed_keywords": [
+      "信息混乱",
+      "内耗",
+      "压抑感受"
+    ],
+    "upright_meaning": "在安静里留意尚未说出来的感受和线索。给自己一点整理的时间。",
+    "reversed_meaning": "模糊的感受值得听见，也值得用事实核实。先减少干扰，再判断发生了什么。",
+    "love_meaning": "给对话留出空白，问清对方真正想表达什么。",
+    "study_meaning": "安静复盘错题，找出自己常忽略的规律。",
+    "work_meaning": "关键资料未齐时，记录疑问和复核时间。",
+    "mood_meaning": "给自己十分钟不接收新信息，观察呼吸和情绪。",
+    "daily_advice": "写下一个直觉，再列出支持它的两条线索。",
+    "tt_message": "今天可以把节奏轻轻放慢一点。"
+  },
+  {
+    "id": "03_The_Empress",
+    "number": 3,
+    "name_cn": "女皇",
+    "name_en": "The Empress",
+    "image_path": "handdrawn/major_arcana/cards/03_The_Empress.png",
+    "upright_keywords": [
+      "照料",
+      "创造",
+      "滋养"
+    ],
+    "reversed_keywords": [
+      "过度付出",
+      "匮乏感",
+      "界限"
+    ],
+    "upright_meaning": "留一点心力滋养身边真实存在的东西。稳定的照料也能带来创造力。",
+    "reversed_meaning": "总把照顾放在自己后面会让人疲惫。留意哪里需要休息、求助或设立界限。",
+    "love_meaning": "表达关心时，也问问对方需要怎样的支持。",
+    "study_meaning": "创造舒服的学习环境，给积累留出时间。",
+    "work_meaning": "培养可以长期维护的流程，给同伴具体反馈。",
+    "mood_meaning": "照顾饮食、休息和环境里的一个小细节。",
+    "daily_advice": "做一件既温柔又能长期坚持的事。",
+    "tt_message": "你也值得被好好照顾哦。"
+  },
+  {
+    "id": "04_The_Emperor",
+    "number": 4,
+    "name_cn": "皇帝",
+    "name_en": "The Emperor",
+    "image_path": "handdrawn/major_arcana/cards/04_The_Emperor.png",
+    "upright_keywords": [
+      "秩序",
+      "责任",
+      "边界"
+    ],
+    "reversed_keywords": [
+      "僵化",
+      "控制",
+      "结构失衡"
+    ],
+    "upright_meaning": "清晰的规则能给你腾出空间。承担该承担的事，同时把边界说清。",
+    "reversed_meaning": "结构本该服务于目标。若规则变成拉扯，看看哪里需要恢复弹性和信任。",
+    "love_meaning": "就自己的界限坦诚沟通，留给彼此选择的空间。",
+    "study_meaning": "安排固定复习时段，遇到堵点及时调整。",
+    "work_meaning": "写清职责、完成标准和下一次对齐时间。",
+    "mood_meaning": "从能管理的一小块开始，减少对所有事的控制感。",
+    "daily_advice": "删掉一条无效规则，明确一个有用边界。",
+    "tt_message": "有个小计划，就可以放心往前走一点。"
+  },
+  {
+    "id": "05_The_Hierophant",
+    "number": 5,
+    "name_cn": "教皇",
+    "name_en": "The Hierophant",
+    "image_path": "handdrawn/major_arcana/cards/05_The_Hierophant.png",
+    "upright_keywords": [
+      "传承",
+      "学习",
+      "共同价值"
+    ],
+    "reversed_keywords": [
+      "独立思考",
+      "规则摩擦",
+      "重新选择"
+    ],
+    "upright_meaning": "借助可靠的经验和共同约定，你可以少走一些弯路。给学习找一个可信的参照。",
+    "reversed_meaning": "旧做法未必适合现在。弄清规则为何存在，再谨慎地提出替代方式。",
+    "love_meaning": "聊聊双方看重的价值，在差异里找到可商量的共识。",
+    "study_meaning": "请教一个可靠的人，再用自己的话复述方法。",
+    "work_meaning": "先理解团队惯例，再写下一处可改进的细节。",
+    "mood_meaning": "允许自己同时尊重过去和尝试新的方法。",
+    "daily_advice": "选一条有用经验，并观察它适用于什么情境。",
+    "tt_message": "有人能给你一点方向，你也可以走出自己的路。"
+  },
+  {
+    "id": "06_The_Lovers",
+    "number": 6,
+    "name_cn": "恋人",
+    "name_en": "The Lovers",
+    "image_path": "handdrawn/major_arcana/cards/06_The_Lovers.png",
+    "upright_keywords": [
+      "价值",
+      "选择",
+      "互相理解"
+    ],
+    "reversed_keywords": [
+      "价值冲突",
+      "失衡",
+      "回避选择"
+    ],
+    "upright_meaning": "把重要的选择与真正看重的价值放在一起审视。理解与诚实能稳住联结。",
+    "reversed_meaning": "当需求和承诺不再一致时，回到事实与感受，看看还有哪里可以协商。",
+    "love_meaning": "先听懂彼此在意的事，再讨论下一步。",
+    "study_meaning": "在两个安排之间按长期目标取舍。",
+    "work_meaning": "合作前对齐优先级与各自付出的边界。",
+    "mood_meaning": "把你在意的三件事写下来，选择会清楚一点。",
+    "daily_advice": "为一项犹豫的决定写出最重要的判断标准。",
+    "tt_message": "你可以先听听自己真正想要什么。"
+  },
+  {
+    "id": "07_The_Chariot",
+    "number": 7,
+    "name_cn": "战车",
+    "name_en": "The Chariot",
+    "image_path": "handdrawn/major_arcana/cards/07_The_Chariot.png",
+    "upright_keywords": [
+      "方向",
+      "执行",
+      "自律"
+    ],
+    "reversed_keywords": [
+      "方向拉扯",
+      "强推",
+      "失去节奏"
+    ],
+    "upright_meaning": "把分散的精力收回到一个明确的方向。稳稳推进比一口气冲得很远更实在。",
+    "reversed_meaning": "在拉扯里加速容易用错力。重看目标、节奏和分工，把力量放回能前进的一处。",
+    "love_meaning": "主动谈方向，同时确认双方愿意一起往前。",
+    "study_meaning": "把大目标分成今天能完成的小练习。",
+    "work_meaning": "明确交付目标，减少并行战线。",
+    "mood_meaning": "给冲劲安排休息和回看，让节奏可持续。",
+    "daily_advice": "只选一件最能推动局面的事作为首要任务。",
+    "tt_message": "我在这儿，陪你把今天这一小段路走稳。"
+  },
+  {
+    "id": "08_Strength",
+    "number": 8,
+    "name_cn": "力量",
+    "name_en": "Strength",
+    "image_path": "handdrawn/major_arcana/cards/08_Strength.png",
+    "upright_keywords": [
+      "耐心",
+      "温和",
+      "勇气"
+    ],
+    "reversed_keywords": [
+      "疲惫",
+      "自我怀疑",
+      "冲动"
+    ],
+    "upright_meaning": "柔和可以是一种力量。先安顿内在的急躁，再照着你认定的方式行动。",
+    "reversed_meaning": "精力下降时，克制会变得吃力。试着减少自责，给自己找回可用的一点支持。",
+    "love_meaning": "用平静的语气表达真实不适，也听对方怎么理解。",
+    "study_meaning": "难题卡住时换一步小练习，等状态恢复再回头。",
+    "work_meaning": "先处理冲突中可协商的一点，给沟通留余地。",
+    "mood_meaning": "发现自己累了就停一会儿，允许有起伏。",
+    "daily_advice": "对一个让你紧张的场景提前做两次慢呼吸。",
+    "tt_message": "温柔一点也很有力量，包括对自己。"
+  },
+  {
+    "id": "09_The_Hermit",
+    "number": 9,
+    "name_cn": "隐士",
+    "name_en": "The Hermit",
+    "image_path": "handdrawn/major_arcana/cards/09_The_Hermit.png",
+    "upright_keywords": [
+      "独处",
+      "反思",
+      "寻找方向"
+    ],
+    "reversed_keywords": [
+      "退缩",
+      "孤立",
+      "过度分析"
+    ],
+    "upright_meaning": "安静地回看自己的判断。你可以暂离杂音，找到一个值得继续跟随的线索。",
+    "reversed_meaning": "独处也需要出口。如果思考开始打转，试着联系可信赖的人或给决定设个期限。",
+    "love_meaning": "说明自己需要的独处时间，并约好重新沟通的时点。",
+    "study_meaning": "复盘一项旧作业，提炼可以迁移的方法。",
+    "work_meaning": "保护一段专注时间，写下下一步的判断依据。",
+    "mood_meaning": "给安静和连接各留一个可行的安排。",
+    "daily_advice": "用十分钟回顾上一次成功靠的是什么。",
+    "tt_message": "你可以点一盏小灯，慢慢看清脚下。"
+  },
+  {
+    "id": "10_Wheel_of_Fortune",
+    "number": 10,
+    "name_cn": "命运之轮",
+    "name_en": "Wheel of Fortune",
+    "image_path": "handdrawn/major_arcana/cards/10_Wheel_of_Fortune.png",
+    "upright_keywords": [
+      "循环",
+      "时机",
+      "适应"
+    ],
+    "reversed_keywords": [
+      "反复",
+      "阻力",
+      "难以适应"
+    ],
+    "upright_meaning": "有些变化来自环境。观察新的节奏，留意你仍可调整的部分。",
+    "reversed_meaning": "旧问题又出现时，先从循环里找线索。换一个小做法，比强行控制变化更可行。",
+    "love_meaning": "遇到节奏变化就重新确认彼此可用的时间。",
+    "study_meaning": "根据阶段状态调整复习计划，保留缓冲。",
+    "work_meaning": "检查外部依赖变化，准备一项可切换的方案。",
+    "mood_meaning": "把暂时无法控制的事记下来，先照料当下。",
+    "daily_advice": "为今天的一项变化写出备选路线。",
+    "tt_message": "变化来了，我们可以先找一个站稳的位置。"
+  },
+  {
+    "id": "11_Justice",
+    "number": 11,
+    "name_cn": "正义",
+    "name_en": "Justice",
+    "image_path": "handdrawn/major_arcana/cards/11_Justice.png",
+    "upright_keywords": [
+      "事实",
+      "责任",
+      "公平"
+    ],
+    "reversed_keywords": [
+      "偏见",
+      "推责",
+      "判断失衡"
+    ],
+    "upright_meaning": "把事实、判断和责任分开看。你可以用清晰一致的标准做出选择。",
+    "reversed_meaning": "受到情绪或立场影响时，补充信息、听取另一种看法，并承认自己的参与。",
+    "love_meaning": "就同一件事听完双方的说法，再讨论公平的分配。",
+    "study_meaning": "用统一标准回看答案和失误原因。",
+    "work_meaning": "记录决策依据、受影响方和责任归属。",
+    "mood_meaning": "把对自己的批评换成一条可以核实的事实。",
+    "daily_advice": "做一个决定之前，检查标准是否一致。",
+    "tt_message": "不确定时，先把事实摆整齐吧。"
+  },
+  {
+    "id": "12_The_Hanged_Man",
+    "number": 12,
+    "name_cn": "倒吊人",
+    "name_en": "The Hanged Man",
+    "image_path": "handdrawn/major_arcana/cards/12_The_Hanged_Man.png",
+    "upright_keywords": [
+      "暂停",
+      "换角度",
+      "放下"
+    ],
+    "reversed_keywords": [
+      "拖延",
+      "停滞",
+      "无效牺牲"
+    ],
+    "upright_meaning": "暂缓行动会给观察留下空间。从不同角度看看眼前的事，可能出现一条新路。",
+    "reversed_meaning": "等待有时已经失去作用。可以辨认你在坚持什么，并为暂停设一条结束条件。",
+    "love_meaning": "暂时停一停争论，换时间或方式再谈。",
+    "study_meaning": "换一个例题或解释角度，看看卡点是否改变。",
+    "work_meaning": "问清等待的收益和成本，决定继续还是调整。",
+    "mood_meaning": "允许暂时没有答案，给自己一个回看时间。",
+    "daily_advice": "从另一方视角写下同一个问题。",
+    "tt_message": "停一停也算走路的一部分。"
+  },
+  {
+    "id": "13_Death",
+    "number": 13,
+    "name_cn": "死神",
+    "name_en": "Death",
+    "image_path": "handdrawn/major_arcana/cards/13_Death.png",
+    "upright_keywords": [
+      "结束",
+      "转化",
+      "告别"
+    ],
+    "reversed_keywords": [
+      "抗拒变化",
+      "留恋",
+      "过渡"
+    ],
+    "upright_meaning": "一个阶段走到尾声，新的安排可以慢慢长出来。告别会带来感受，也会清出空间。",
+    "reversed_meaning": "想留住熟悉的东西很正常。先承认不舍，再尝试放下一项已经失去作用的安排。",
+    "love_meaning": "重新协商一项早已不合适的相处方式。",
+    "study_meaning": "结束一种耗时又低效的复习方法，留下一条学到的经验。",
+    "work_meaning": "为旧项目做收尾清单，明确交接与承接。",
+    "mood_meaning": "给结束留一点情绪空间，再找一个新习惯的起点。",
+    "daily_advice": "清理一项旧承诺，写下接下来想保留的东西。",
+    "tt_message": "有些事可以慢慢放下，我会陪你腾一点空间。"
+  },
+  {
+    "id": "14_Temperance",
+    "number": 14,
+    "name_cn": "节制",
+    "name_en": "Temperance",
+    "image_path": "handdrawn/major_arcana/cards/14_Temperance.png",
+    "upright_keywords": [
+      "平衡",
+      "调和",
+      "耐心"
+    ],
+    "reversed_keywords": [
+      "节奏失衡",
+      "过度",
+      "恢复"
+    ],
+    "upright_meaning": "把不同需求放在同一张桌上慢慢调和。作息和投入的稳定感比极端更有用。",
+    "reversed_meaning": "留意哪里投入过多、补给太少。先调整一件事，让节奏更容易维持。",
+    "love_meaning": "在彼此不同的速度之间试一个折中安排。",
+    "study_meaning": "穿插练习与休息，不把疲惫堆到最后。",
+    "work_meaning": "平衡深度工作与沟通窗口。",
+    "mood_meaning": "选一种温和的恢复方式，给它一段完整时间。",
+    "daily_advice": "为今天安排一个可以实际做到的休息点。",
+    "tt_message": "慢慢调一调，一点点就会更顺手。"
+  },
+  {
+    "id": "15_The_Devil",
+    "number": 15,
+    "name_cn": "恶魔",
+    "name_en": "The Devil",
+    "image_path": "handdrawn/major_arcana/cards/15_The_Devil.png",
+    "upright_keywords": [
+      "依附",
+      "诱惑",
+      "察觉"
+    ],
+    "reversed_keywords": [
+      "松绑",
+      "看清模式",
+      "拉扯"
+    ],
+    "upright_meaning": "留意某种习惯或期待带来的束缚。它曾满足什么需求，今天又有怎样的代价？",
+    "reversed_meaning": "你可能已经看见某种拉扯。尝试一项可持续的替代行为，变化可以从小处开始。",
+    "love_meaning": "区分关心、依赖和控制，确认彼此是否自愿。",
+    "study_meaning": "识别最容易打断学习的触发点，改变一个环境线索。",
+    "work_meaning": "检查那些看似高效、实际让你失去选择权的承诺。",
+    "mood_meaning": "用好奇心看待反复出现的习惯，减少羞耻感。",
+    "daily_advice": "记录一次冲动出现前在做什么，以及可替代的动作。",
+    "tt_message": "发现自己被什么拉住，就已经多了一点选择。"
+  },
+  {
+    "id": "16_The_Tower",
+    "number": 16,
+    "name_cn": "高塔",
+    "name_en": "The Tower",
+    "image_path": "handdrawn/major_arcana/cards/16_The_Tower.png",
+    "upright_keywords": [
+      "变动",
+      "震动",
+      "重建"
+    ],
+    "reversed_keywords": [
+      "回避变化",
+      "渐进修正",
+      "释放压力"
+    ],
+    "upright_meaning": "旧安排松动时，先稳住眼前能做的事。变化可能帮你看见原先被掩盖的薄弱处。",
+    "reversed_meaning": "有些紧张可以从小处修补。早点识别裂缝，为调整留出时间和备用方案。",
+    "love_meaning": "出现出乎意料的情况时先稳定沟通，再讨论重建。",
+    "study_meaning": "旧方法突然不适用时，把基础补到看得见为止。",
+    "work_meaning": "识别关键单点故障，准备一个最小备选。",
+    "mood_meaning": "遇到冲击可以先照顾安全感和日常秩序。",
+    "daily_advice": "检查一项经不起变化的安排，增加一点缓冲。",
+    "tt_message": "先站稳就好，重建可以一步一步来。"
+  },
+  {
+    "id": "17_The_Star",
+    "number": 17,
+    "name_cn": "星星",
+    "name_en": "The Star",
+    "image_path": "handdrawn/major_arcana/cards/17_The_Star.png",
+    "upright_keywords": [
+      "希望",
+      "恢复",
+      "开阔"
+    ],
+    "reversed_keywords": [
+      "信心波动",
+      "失落",
+      "重新连接"
+    ],
+    "upright_meaning": "把注意力放回缓慢但真实的恢复。一个能持续的小动作，足够为希望留位置。",
+    "reversed_meaning": "信心下降时，具体的支持往往更有效。把期待放到一件可衡量的小事上。",
+    "love_meaning": "分享一个温和的愿望，愿意听对方怎样看待。",
+    "study_meaning": "做一项能积累信心的可完成练习。",
+    "work_meaning": "追踪一点实际进展，和同伴确认下步目标。",
+    "mood_meaning": "寻找曾让你恢复平静的事，并留一点时间给它。",
+    "daily_advice": "记录一个已有进展和一个可求助的人。",
+    "tt_message": "你可以慢慢来，小小的进步也算数。"
+  },
+  {
+    "id": "18_The_Moon",
+    "number": 18,
+    "name_cn": "月亮",
+    "name_en": "The Moon",
+    "image_path": "handdrawn/major_arcana/cards/18_The_Moon.png",
+    "upright_keywords": [
+      "不确定",
+      "想象",
+      "辨别"
+    ],
+    "reversed_keywords": [
+      "迷雾消散",
+      "焦虑",
+      "核实"
+    ],
+    "upright_meaning": "面对模糊时给判断留余地。想象能帮你发现可能，核实能让你踏实下来。",
+    "reversed_meaning": "线索开始变清楚时，逐项验证；仍在紧张时，可以先减少过量的信息和猜测。",
+    "love_meaning": "把猜测改成一个可以向对方温和确认的问题。",
+    "study_meaning": "圈出自己以为懂了的地方，做一个验证题。",
+    "work_meaning": "区分事实、假设和待确认信息。",
+    "mood_meaning": "把担忧写下来，标注其中可以核实的部分。",
+    "daily_advice": "为不确定的事列一个可以今天求证的问题。",
+    "tt_message": "路有点雾也没关系，我们先看清下一步。"
+  },
+  {
+    "id": "19_The_Sun",
+    "number": 19,
+    "name_cn": "太阳",
+    "name_en": "The Sun",
+    "image_path": "handdrawn/major_arcana/cards/19_The_Sun.png",
+    "upright_keywords": [
+      "清晰",
+      "活力",
+      "分享"
+    ],
+    "reversed_keywords": [
+      "疲惫",
+      "亮度减弱",
+      "恢复简单"
+    ],
+    "upright_meaning": "看见已经完成的事情，享受清晰和连接带来的活力。简单的快乐也值得安排。",
+    "reversed_meaning": "活力有起伏。少比较，降低今天的要求，把时间留给切实能恢复的小事。",
+    "love_meaning": "分享一件具体让你开心的事，也欣赏彼此的投入。",
+    "study_meaning": "把掌握的知识简明讲给别人或自己听。",
+    "work_meaning": "说清进展和成果，让好的做法可被重复。",
+    "mood_meaning": "接触一点日常里的亮处，允许自己也有安静的时候。",
+    "daily_advice": "给一件普通的好事做个记录。",
+    "tt_message": "愿你今天有一点明亮的时刻。"
+  },
+  {
+    "id": "20_Judgement",
+    "number": 20,
+    "name_cn": "审判",
+    "name_en": "Judgement",
+    "image_path": "handdrawn/major_arcana/cards/20_Judgement.png",
+    "upright_keywords": [
+      "复盘",
+      "回应",
+      "重新决定"
+    ],
+    "reversed_keywords": [
+      "自责",
+      "回避回顾",
+      "犹豫"
+    ],
+    "upright_meaning": "回看经历并听见现在真正重要的事。你可以基于新理解做一次更诚实的决定。",
+    "reversed_meaning": "复盘不是审判自己。把问题缩小，区分你当时知道的事和现在新知道的事。",
+    "love_meaning": "承认过去造成的影响，讨论之后如何做得更好。",
+    "study_meaning": "回顾一类失误，写下下一次的触发提醒。",
+    "work_meaning": "把经验总结为一个可执行的改进。",
+    "mood_meaning": "把责备换成对过去处境的理解。",
+    "daily_advice": "问自己现在愿意为哪件事作出新的回应。",
+    "tt_message": "你已经走到这里了，可以带着学到的东西再选一次。"
+  },
+  {
+    "id": "21_The_World",
+    "number": 21,
+    "name_cn": "世界",
+    "name_en": "The World",
+    "image_path": "handdrawn/major_arcana/cards/21_The_World.png",
+    "upright_keywords": [
+      "完成",
+      "整合",
+      "阶段转换"
+    ],
+    "reversed_keywords": [
+      "未竟",
+      "收尾拖延",
+      "重新整理"
+    ],
+    "upright_meaning": "把不同努力收拢，承认一个阶段的完成。为下一步留出清楚的起点。",
+    "reversed_meaning": "还有一些线头未整理时，明确怎样算完成，看看是否只差一个小收尾。",
+    "love_meaning": "一起回看共同走过的过程，确认下一段期待。",
+    "study_meaning": "整合笔记，把学到的方法写成一页提纲。",
+    "work_meaning": "完成交付和交接，留下可复用的记录。",
+    "mood_meaning": "给完成做一个小小的庆祝，给过渡留空间。",
+    "daily_advice": "为一项正在收尾的事写一条完成标准。",
+    "tt_message": "把走过的路好好记一下，然后去看看下一站。"
+  }
+]

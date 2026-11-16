@@ -1,0 +1,87 @@
+{
+  "id": "hug",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    631,
+    437
+  ],
+  "scale": 0.99,
+  "roll": -6,
+  "face": [
+    -3,
+    -10,
+    -0.16,
+    -0.43,
+    1
+  ],
+  "fit": 1.82,
+  "action": "hug",
+  "bunnyRepair": {
+    "leftEar": [
+      462,
+      145
+    ],
+    "rightEar": [
+      711,
+      127
+    ]
+  },
+  "layers": [
+    {
+      "file": "body.png",
+      "name": "Body · 连续肩袖与帽身底层",
+      "motion": "bunnyBody",
+      "rect": [
+        148,
+        -8,
+        1065,
+        1326
+      ]
+    },
+    {
+      "file": "hood-inner.png",
+      "name": "Hood_Inner · 帽内补绘",
+      "motion": "bunnyInner",
+      "rect": [
+        360,
+        136,
+        820,
+        473
+      ]
+    },
+    {
+      "file": "neck.png",
+      "name": "Neck · 下巴重叠与领口过渡",
+      "motion": "bunnyNeck",
+      "rect": [
+        583,
+        382,
+        733,
+        493
+      ]
+    },
+    {
+      "file": "hood-edge.png",
+      "name": "Hood_Edge · 前景帽檐",
+      "motion": "bunnyEdge",
+      "rect": [
+        342,
+        -8,
+        878,
+        489
+      ]
+    },
+    {
+      "file": "grip.png",
+      "name": "抱兔子 · 玩偶与双手接触区",
+      "motion": "bunnyGrip",
+      "rect": [
+        349,
+        389,
+        728,
+        689
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "action": "ListeningMusic",
+  "id": "M06",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    626,
+    428
+  ],
+  "scale": 1.11,
+  "roll": -8.5,
+  "fit": 1.91,
+  "face": [
+    -4,
+    -7,
+    0.075,
+    -0.08,
+    1.02
+  ],
+  "mouthForm": 0.16,
+  "masterSha256": "9986428139e7cd679147c889ac9b65465636c3a49668f9523158b8a31438d651",
+  "layers": [
+    {
+      "name": "Body and clothing",
+      "motion": "body",
+      "file": "part-0.png",
+      "rect": [
+        171,
+        345,
+        1055,
+        1306
+      ]
+    },
+    {
+      "name": "Headphone Worn - Headband",
+      "motion": "worn",
+      "file": "part-1.png",
+      "rect": [
+        392,
+        15,
+        813,
+        240
+      ]
+    },
+    {
+      "name": "Headphone Worn - Left Cup",
+      "motion": "worn",
+      "file": "part-2.png",
+      "rect": [
+        394,
+        241,
+        480,
+        382
+      ]
+    },
+    {
+      "name": "Headphone Worn - Right Cup",
+      "motion": "worn",
+      "file": "part-3.png",
+      "rect": [
+        709,
+        194,
+        796,
+        346
+      ]
+    },
+    {
+      "name": "Hand on Earcup and Cuff",
+      "motion": "wornHand",
+      "file": "part-4.png",
+      "rect": [
+        696,
+        258,
+        808,
+        475
+      ]
+    },
+    {
+      "name": "Resting Hand and Cuff",
+      "motion": "hold",
+      "file": "part-5.png",
+      "rect": [
+        484,
+        549,
+        649,
+        657
+      ]
+    },
+    {
+      "name": "Listening neck skin and jaw shadow",
+      "motion": "neckListening",
+      "file": "part-6.png",
+      "rect": [
+        555,
+        383,
+        717,
+        478
+      ]
+    }
+  ],
+  "eyesClosed": {
+    "interval": [
+      20,
+      45
+    ],
+    "hold": [
+      1.5,
+      3
+    ],
+    "close": 0.32,
+    "open": 0.46
+  }
+}

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="referrer" content="strict-origin">
+<title>Apple Music · TT</title>
+<style>
+body{font:14px 'Microsoft YaHei UI',sans-serif;background:#faf5fd;color:#483350;margin:20px} h2{font-size:21px}
+button,input,select{font:inherit;padding:6px 10px;background:#fff;color:#50345e;border:1px solid #dfcbe9;border-radius:8px}
+button:not(:disabled){cursor:pointer} button:disabled{opacity:.55} #status{min-height:1.5em} #results{padding:0;list-style:none}
+li{margin:6px 0;display:flex;gap:8px;align-items:center} img{width:38px;height:38px;border-radius:6px;object-fit:cover}
+</style>
+<h2>Apple Music</h2>
+<p id="status" role="status">正在加载 MusicKit…</p>
+<p><button id="authorize" disabled>使用 Apple 账户授权</button> <button id="disconnect" disabled>断开授权</button></p>
+<form id="search"><input id="query" aria-label="搜索词" maxlength="120" required placeholder="搜索 Apple Music">
+<select id="kind" aria-label="搜索类别"><option value="songs">歌曲</option><option value="albums">专辑</option><option value="artists">歌手</option></select>
+<button id="find" disabled>搜索</button> <button type="button" id="library" disabled>我的歌单</button></form>
+<ul id="results"></ul>
+<script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" defer></script>
+<script src="/apple.js" defer></script>
+</html>

@@ -1,0 +1,79 @@
+{
+  "id": "sailor",
+  "name": "水手服长裙",
+  "width": 1199,
+  "height": 1312,
+  "fit": 1.82,
+  "anchor": [
+    623,
+    422
+  ],
+  "scale": 1.1,
+  "roll": 0,
+  "face": [
+    0,
+    0,
+    0,
+    0,
+    0.93
+  ],
+  "sharedIdle": true,
+  "hood": false,
+  "layers": [
+    {
+      "name": "身体及服装底层",
+      "file": "body.png",
+      "rect": [
+        136,
+        386,
+        1060,
+        1312
+      ],
+      "motion": "body"
+    },
+    {
+      "name": "黑色乐福鞋",
+      "file": "shoes.png",
+      "rect": [
+        356,
+        1158,
+        659,
+        1312
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "白色罗纹堆堆袜",
+      "file": "socks.png",
+      "rect": [
+        378,
+        1009,
+        638,
+        1176
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "浅灰百褶长裙",
+      "file": "skirt.png",
+      "rect": [
+        136,
+        611,
+        1060,
+        1295
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "颈部隐藏重叠",
+      "file": "neck.png",
+      "rect": [
+        565,
+        384,
+        687,
+        510
+      ],
+      "motion": "neck"
+    }
+  ]
+}

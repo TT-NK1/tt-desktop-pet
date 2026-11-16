@@ -1,0 +1,112 @@
+{
+  "id": "maid",
+  "name": "英式女仆",
+  "width": 1199,
+  "height": 1312,
+  "fit": 1.82,
+  "anchor": [
+    625,
+    420
+  ],
+  "scale": 1.1,
+  "roll": 0,
+  "face": [
+    0,
+    0,
+    0,
+    0,
+    0.93
+  ],
+  "sharedIdle": true,
+  "hood": false,
+  "layers": [
+    {
+      "name": "身体及服装底层",
+      "file": "body.png",
+      "rect": [
+        122,
+        385,
+        1104,
+        1308
+      ],
+      "motion": "body"
+    },
+    {
+      "name": "蝴蝶结玛丽珍鞋",
+      "file": "shoes.png",
+      "rect": [
+        362,
+        1128,
+        672,
+        1308
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "白色长袜",
+      "file": "socks.png",
+      "rect": [
+        404,
+        733,
+        710,
+        1152
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "左肩荷叶边",
+      "file": "ruffle-left.png",
+      "rect": [
+        418,
+        412,
+        520,
+        573
+      ],
+      "motion": "trim"
+    },
+    {
+      "name": "右肩荷叶边",
+      "file": "ruffle-right.png",
+      "rect": [
+        730,
+        413,
+        830,
+        563
+      ],
+      "motion": "trim"
+    },
+    {
+      "name": "围裙及腰侧缎带",
+      "file": "apron.png",
+      "rect": [
+        744,
+        757,
+        1041,
+        1158
+      ],
+      "motion": "skirt"
+    },
+    {
+      "name": "颈部隐藏重叠",
+      "file": "neck.png",
+      "rect": [
+        576,
+        386,
+        678,
+        468
+      ],
+      "motion": "neck"
+    },
+    {
+      "name": "White maid bonnet",
+      "file": "maid-bonnet.png",
+      "motion": "maidBonnet",
+      "rect": [
+        414,
+        55,
+        819,
+        291
+      ]
+    }
+  ]
+}

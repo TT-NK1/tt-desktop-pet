@@ -1,0 +1,145 @@
+{
+  "id": "phone",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    618,
+    419
+  ],
+  "scale": 1.01,
+  "roll": 0,
+  "face": [
+    -1,
+    -13,
+    0,
+    -0.54,
+    1
+  ],
+  "fit": 1.82,
+  "action": "phone",
+  "layers": [
+    {
+      "name": "身体与服装底层",
+      "motion": "body",
+      "file": "body.png",
+      "rect": [
+        172,
+        373,
+        1030,
+        1312
+      ]
+    },
+    {
+      "name": "浅灰长百褶裙",
+      "file": "skirt.png",
+      "motion": "skirt",
+      "rect": [
+        135,
+        605,
+        1068,
+        1301
+      ]
+    },
+    {
+      "name": "操作拇指",
+      "motion": "phoneThumb",
+      "file": "phoneThumb.png",
+      "rect": [
+        515,
+        514,
+        579,
+        547
+      ]
+    },
+    {
+      "name": "手机机身与背盖",
+      "motion": "phoneBody",
+      "file": "phoneBody.png",
+      "rect": [
+        573,
+        483,
+        662,
+        609
+      ]
+    },
+    {
+      "name": "左手与手腕",
+      "motion": "phoneLeftHand",
+      "file": "phoneLeftHand.png",
+      "rect": [
+        585,
+        550,
+        705,
+        642
+      ]
+    },
+    {
+      "name": "右手与手腕",
+      "motion": "phoneRightHand",
+      "file": "phoneRightHand.png",
+      "rect": [
+        484,
+        539,
+        580,
+        622
+      ]
+    },
+    {
+      "name": "屏幕侧缘淡光",
+      "motion": "phoneFeedback",
+      "file": "phoneFeedback.png",
+      "rect": [
+        574,
+        524,
+        578,
+        555
+      ]
+    }
+  ],
+  "sailor": {
+    "schedule": {
+      "interval": [
+        5,
+        12
+      ],
+      "duration": 2.02,
+      "count": [
+        0,
+        3
+      ],
+      "hold": [
+        0.12,
+        0.88
+      ]
+    },
+    "thumb": {
+      "root": [
+        519,
+        540
+      ],
+      "tip": [
+        576,
+        531
+      ],
+      "edge": 576,
+      "tapTravel": 6.4,
+      "scrollTravel": 16
+    },
+    "smile": {
+      "schedule": {
+        "interval": [
+          20,
+          45
+        ],
+        "close": 0.38,
+        "hold": [
+          1,
+          1.4
+        ],
+        "open": 0.44
+      },
+      "mouthForm": 0.81,
+      "eyeNarrowing": 0.099
+    }
+  }
+}

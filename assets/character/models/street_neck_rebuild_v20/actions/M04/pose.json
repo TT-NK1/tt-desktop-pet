@@ -1,0 +1,173 @@
+{
+  "action": "Reading",
+  "id": "M04",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    626,
+    425
+  ],
+  "scale": 1.09,
+  "roll": -0.5,
+  "fit": 1.92,
+  "face": [
+    -2,
+    -28,
+    -0.04,
+    -0.9,
+    0.98
+  ],
+  "masterSha256": "9986428139e7cd679147c889ac9b65465636c3a49668f9523158b8a31438d651",
+  "layers": [
+    {
+      "name": "Body and clothing",
+      "motion": "body",
+      "file": "part-0.png",
+      "rect": [
+        139,
+        369,
+        1060,
+        1309
+      ]
+    },
+    {
+      "name": "Book left page block",
+      "motion": "hold",
+      "file": "part-1.png",
+      "rect": [
+        405,
+        564,
+        595,
+        636
+      ]
+    },
+    {
+      "name": "Book right page block",
+      "motion": "hold",
+      "file": "part-2.png",
+      "rect": [
+        595,
+        568,
+        786,
+        636
+      ]
+    },
+    {
+      "name": "Book Cover",
+      "motion": "hold",
+      "file": "part-3.png",
+      "rect": [
+        401,
+        586,
+        786,
+        795
+      ]
+    },
+    {
+      "name": "Left hand and cuff (outer support)",
+      "motion": "handLeft",
+      "file": "part-4.png",
+      "rect": [
+        335,
+        620,
+        478,
+        735
+      ]
+    },
+    {
+      "name": "Right hand and cuff (outer support)",
+      "motion": "handRight",
+      "file": "part-5.png",
+      "rect": [
+        710,
+        622,
+        852,
+        735
+      ]
+    },
+    {
+      "name": "Right hand and cuff - grip underlay",
+      "motion": "gripBase",
+      "file": "turn-grip-base.png",
+      "rect": [
+        710,
+        622,
+        852,
+        735
+      ]
+    },
+    {
+      "name": "Turning sheet - Front",
+      "motion": "sheetFront",
+      "file": "turn-sheet-front.png",
+      "rect": [
+        594,
+        548,
+        786,
+        642
+      ]
+    },
+    {
+      "name": "Turning sheet - Back",
+      "motion": "sheetBack",
+      "file": "turn-sheet-back.png",
+      "rect": [
+        594,
+        548,
+        786,
+        642
+      ]
+    },
+    {
+      "name": "Turning sheet - free edge",
+      "motion": "sheetEdge",
+      "file": "turn-sheet-edge.png",
+      "rect": [
+        782,
+        548,
+        786,
+        642
+      ]
+    },
+    {
+      "name": "Turning sheet - shadow on left",
+      "motion": "shadowLeft",
+      "file": "turn-shadow-left.png",
+      "rect": [
+        405,
+        564,
+        595,
+        636
+      ]
+    },
+    {
+      "name": "Turning sheet - shadow on right",
+      "motion": "shadowRight",
+      "file": "turn-shadow-right.png",
+      "rect": [
+        595,
+        568,
+        786,
+        636
+      ]
+    },
+    {
+      "name": "Right hand - thumb pinch",
+      "motion": "gripThumb",
+      "file": "turn-thumb.png",
+      "rect": [
+        710,
+        622,
+        804,
+        665
+      ]
+    }
+  ],
+  "pageTurn": {
+    "interval": [
+      30,
+      90
+    ],
+    "duration": 1.8
+  }
+}

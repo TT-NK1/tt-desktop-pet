@@ -1,0 +1,170 @@
+{
+  "id": "serving",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    614,
+    420
+  ],
+  "scale": 1.01,
+  "roll": 0,
+  "face": [
+    -1,
+    -13,
+    0,
+    -0.51,
+    1
+  ],
+  "fit": 1.82,
+  "action": "serving",
+  "layers": [
+    {
+      "name": "身体与服装底层",
+      "file": "body.png",
+      "motion": "body",
+      "rect": [
+        122,
+        373,
+        1115,
+        1307
+      ]
+    },
+    {
+      "name": "白色围裙与荷叶边",
+      "file": "apron.png",
+      "motion": "apron",
+      "rect": [
+        765,
+        769,
+        1050,
+        1131
+      ]
+    },
+    {
+      "name": "左肩荷叶边",
+      "file": "ruffle-left.png",
+      "motion": "lace",
+      "rect": [
+        406,
+        410,
+        498,
+        549
+      ]
+    },
+    {
+      "name": "右肩荷叶边",
+      "file": "ruffle-right.png",
+      "motion": "lace",
+      "rect": [
+        732,
+        408,
+        825,
+        549
+      ]
+    },
+    {
+      "name": "左侧托盘手掌和前臂",
+      "file": "hand-left.png",
+      "motion": "handL",
+      "rect": [
+        366,
+        598,
+        448,
+        740
+      ],
+      "pivot": [
+        382,
+        712
+      ]
+    },
+    {
+      "name": "右侧托盘手掌和前臂",
+      "file": "hand-right.png",
+      "motion": "handR",
+      "rect": [
+        742,
+        597,
+        830,
+        742
+      ],
+      "pivot": [
+        817,
+        714
+      ]
+    },
+    {
+      "name": "水平托盘",
+      "file": "tray.png",
+      "motion": "prop",
+      "rect": [
+        409,
+        583,
+        778,
+        657
+      ]
+    },
+    {
+      "name": "茶杯与杯碟",
+      "file": "cup.png",
+      "motion": "prop",
+      "rect": [
+        463,
+        537,
+        598,
+        627
+      ]
+    },
+    {
+      "name": "小蛋糕与碟子",
+      "file": "cake.png",
+      "motion": "prop",
+      "rect": [
+        609,
+        524,
+        741,
+        626
+      ]
+    },
+    {
+      "name": "左手前侧手指",
+      "file": "fingers-left.png",
+      "motion": "finger",
+      "rect": [
+        387,
+        600,
+        445,
+        637
+      ],
+      "pivot": [
+        413,
+        621
+      ]
+    },
+    {
+      "name": "右手前侧手指",
+      "file": "fingers-right.png",
+      "motion": "finger",
+      "rect": [
+        740,
+        598,
+        794,
+        635
+      ],
+      "pivot": [
+        771,
+        621
+      ]
+    },
+    {
+      "name": "White maid bonnet",
+      "file": "maid-bonnet.png",
+      "motion": "maidBonnet",
+      "rect": [
+        414,
+        55,
+        819,
+        291
+      ]
+    }
+  ]
+}

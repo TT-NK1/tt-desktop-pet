@@ -1,0 +1,210 @@
+{
+  "id": "photo",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    621,
+    412
+  ],
+  "scale": 1.01,
+  "roll": 0,
+  "face": [
+    -1,
+    -2,
+    0,
+    -0.12,
+    1
+  ],
+  "fit": 1.82,
+  "action": "photo",
+  "layers": [
+    {
+      "name": "固定躯干、水手领与肩线",
+      "motion": "body",
+      "file": "body.png",
+      "rect": [
+        184,
+        374,
+        1033,
+        1308
+      ]
+    },
+    {
+      "name": "左袖与袖口后缘",
+      "motion": "cameraSleeveR",
+      "file": "cameraSleeveR.png",
+      "rect": [
+        664,
+        533,
+        811,
+        662
+      ]
+    },
+    {
+      "name": "右袖与袖口后缘",
+      "motion": "cameraSleeveL",
+      "file": "cameraSleeveL.png",
+      "rect": [
+        387,
+        502,
+        523,
+        658
+      ]
+    },
+    {
+      "name": "浅灰长百褶裙",
+      "file": "skirt.png",
+      "motion": "skirt",
+      "rect": [
+        139,
+        603,
+        1070,
+        1302
+      ]
+    },
+    {
+      "name": "Camera_Body 相机机身",
+      "motion": "cameraBody",
+      "file": "cameraBody.png",
+      "rect": [
+        512,
+        400,
+        681,
+        504
+      ]
+    },
+    {
+      "name": "Camera_Lens 镜头与玻璃",
+      "motion": "cameraLens",
+      "file": "cameraLens.png",
+      "rect": [
+        573,
+        424,
+        646,
+        498
+      ]
+    },
+    {
+      "name": "Camera_Shutter 可按压按钮",
+      "motion": "cameraShutter",
+      "file": "cameraShutter.png",
+      "rect": [
+        529,
+        397,
+        565,
+        412
+      ]
+    },
+    {
+      "name": "右掌、腕与关节连续网格",
+      "motion": "cameraRightHand",
+      "file": "cameraRightHand.png",
+      "rect": [
+        453,
+        377,
+        564,
+        544
+      ]
+    },
+    {
+      "name": "左掌、腕与环握手指",
+      "motion": "cameraLeftHand",
+      "file": "cameraLeftHand.png",
+      "rect": [
+        636,
+        407,
+        735,
+        574
+      ]
+    },
+    {
+      "name": "右袖口前缘遮挡",
+      "motion": "cameraCuffL",
+      "file": "cameraCuffL.png",
+      "rect": [
+        438,
+        504,
+        519,
+        579
+      ]
+    },
+    {
+      "name": "左袖口前缘遮挡",
+      "motion": "cameraCuffR",
+      "file": "cameraCuffR.png",
+      "rect": [
+        666,
+        533,
+        748,
+        611
+      ]
+    },
+    {
+      "name": "Camera_Flash_Glow 镜头光晕",
+      "motion": "cameraGlow",
+      "file": "cameraGlow.png",
+      "rect": [
+        565,
+        416,
+        656,
+        507
+      ]
+    },
+    {
+      "name": "Camera_Flash 快门闪光",
+      "motion": "cameraFlash",
+      "file": "cameraFlash.png",
+      "rect": [
+        573,
+        424,
+        648,
+        499
+      ]
+    }
+  ],
+  "sailor": {
+    "schedule": {
+      "interval": [
+        25,
+        60
+      ],
+      "close": 1.48,
+      "open": 1.88,
+      "hold": [
+        0.62,
+        1.1
+      ]
+    },
+    "camera": {
+      "leftWrist": [
+        480,
+        528
+      ],
+      "rightWrist": [
+        694,
+        554
+      ],
+      "lens": [
+        610,
+        461
+      ],
+      "fingerRoot": [
+        488,
+        414
+      ],
+      "button": [
+        548,
+        401
+      ],
+      "raise": [
+        3,
+        -86
+      ],
+      "rise": 1.48,
+      "pause": 0.48,
+      "lower": 1.4,
+      "flash": 0.19,
+      "gripRevision": true
+    }
+  }
+}

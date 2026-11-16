@@ -1,0 +1,123 @@
+{
+  "id": "gothic",
+  "name": "哥特风",
+  "width": 1199,
+  "height": 1312,
+  "fit": 1.82,
+  "anchor": [
+    625,
+    421
+  ],
+  "scale": 1.1,
+  "roll": 0,
+  "face": [
+    0,
+    0,
+    0,
+    0,
+    0.93
+  ],
+  "sharedIdle": true,
+  "hood": false,
+  "layers": [
+    {
+      "name": "身体及服装底层",
+      "file": "body.png",
+      "rect": [
+        119,
+        383,
+        1085,
+        1307
+      ],
+      "motion": "body"
+    },
+    {
+      "name": "左腿与过膝袜",
+      "file": "socks-left.png",
+      "rect": [
+        343,
+        751,
+        554,
+        1170
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "右腿与过膝袜",
+      "file": "socks-right.png",
+      "rect": [
+        527,
+        752,
+        761,
+        1165
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "厚底玛丽珍鞋",
+      "file": "shoes.png",
+      "rect": [
+        349,
+        1093,
+        687,
+        1307
+      ],
+      "motion": "fixed"
+    },
+    {
+      "name": "左肩蕾丝",
+      "file": "lace-left.png",
+      "rect": [
+        385,
+        436,
+        525,
+        521
+      ],
+      "motion": "trim"
+    },
+    {
+      "name": "右肩蕾丝",
+      "file": "lace-right.png",
+      "rect": [
+        712,
+        435,
+        846,
+        520
+      ],
+      "motion": "trim"
+    },
+    {
+      "name": "格纹裙及裙边",
+      "file": "skirt.png",
+      "rect": [
+        119,
+        813,
+        368,
+        1242
+      ],
+      "motion": "skirt"
+    },
+    {
+      "name": "右侧格纹裙及裙边",
+      "file": "skirt-right.png",
+      "rect": [
+        669,
+        807,
+        1085,
+        1258
+      ],
+      "motion": "skirt"
+    },
+    {
+      "name": "颈部隐藏重叠",
+      "file": "neck.png",
+      "rect": [
+        574,
+        386,
+        678,
+        464
+      ],
+      "motion": "neck"
+    }
+  ]
+}

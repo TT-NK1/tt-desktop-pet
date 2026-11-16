@@ -1,0 +1,190 @@
+{
+  "id": "handcraft",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    623,
+    422
+  ],
+  "scale": 1.01,
+  "roll": 0,
+  "face": [
+    -3,
+    -20.5,
+    -0.27,
+    -0.74,
+    1
+  ],
+  "irisDownPixels": 2.4,
+  "fit": 1.82,
+  "action": "handcraft",
+  "layers": [
+    {
+      "name": "原服装底层与补绘区",
+      "file": "gesture-body.png",
+      "motion": "body",
+      "rect": [
+        289,
+        379,
+        943,
+        1310
+      ]
+    },
+    {
+      "name": "左侧过膝袜",
+      "file": "overknee-left.png",
+      "motion": "overknee",
+      "rect": [
+        368,
+        629,
+        567,
+        1100
+      ]
+    },
+    {
+      "name": "右侧过膝袜",
+      "file": "overknee-right.png",
+      "motion": "overknee",
+      "rect": [
+        510,
+        634,
+        758,
+        1100
+      ]
+    },
+    {
+      "name": "格纹裙与蕾丝裙边",
+      "file": "skirt.png",
+      "motion": "skirt",
+      "rect": [
+        115,
+        840,
+        376,
+        1244
+      ]
+    },
+    {
+      "name": "右侧格纹裙与蕾丝裙边",
+      "file": "skirt-right.png",
+      "motion": "skirt",
+      "rect": [
+        665,
+        829,
+        1095,
+        1258
+      ]
+    },
+    {
+      "name": "肩部蕾丝左片",
+      "file": "lace.png",
+      "motion": "lace",
+      "rect": [
+        383,
+        423,
+        484,
+        503
+      ]
+    },
+    {
+      "name": "肩部蕾丝右片",
+      "file": "lace-right.png",
+      "motion": "lace",
+      "rect": [
+        712,
+        425,
+        807,
+        509
+      ]
+    },
+    {
+      "name": "原木绣框、花样、布面及干净的布边",
+      "file": "hoop-clean.png",
+      "motion": "hoop",
+      "rect": [
+        449,
+        547,
+        736,
+        702
+      ]
+    },
+    {
+      "name": "独立紫线及随针曲线",
+      "file": "gesture-thread.png",
+      "motion": "craftThread",
+      "rect": [
+        500,
+        501,
+        536,
+        585
+      ]
+    },
+    {
+      "name": "独立金属针",
+      "file": "gesture-needle.png",
+      "motion": "craftNeedle",
+      "rect": [
+        504,
+        499,
+        556,
+        548
+      ]
+    },
+    {
+      "name": "扶框手指、手掌和腕根",
+      "file": "hoop-hand.png",
+      "motion": "handR",
+      "rect": [
+        639,
+        571,
+        756,
+        674
+      ]
+    },
+    {
+      "name": "独立持针手掌与捏针指",
+      "file": "gesture-hand.png",
+      "motion": "craftHand",
+      "rect": [
+        398,
+        459,
+        520,
+        583
+      ]
+    }
+  ],
+  "gesture": {
+    "interval": [
+      8,
+      20
+    ],
+    "count": [
+      2,
+      4
+    ],
+    "hold": [
+      1,
+      1.25
+    ],
+    "close": 0.28,
+    "open": 0.22,
+    "secondsPerCount": 0.56
+  },
+  "stitch": {
+    "grip": [
+      507,
+      501
+    ],
+    "tip": [
+      555,
+      547
+    ],
+    "work": [
+      571,
+      584
+    ],
+    "threadEnd": [
+      531,
+      577
+    ]
+  }
+}

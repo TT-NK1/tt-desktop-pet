@@ -1,0 +1,76 @@
+{
+  "id": "stretch",
+  "width": 1108,
+  "height": 1420,
+  "anchor": [
+    575,
+    463
+  ],
+  "scale": 0.97,
+  "roll": 0,
+  "face": [
+    0,
+    3,
+    0,
+    0.14,
+    1
+  ],
+  "fit": 1.7,
+  "action": "stretch",
+  "bunnyRepair": {
+    "leftEar": [
+      439,
+      160
+    ],
+    "rightEar": [
+      678,
+      158
+    ]
+  },
+  "layers": [
+    {
+      "file": "body.png",
+      "name": "Body · 连续肩袖与帽身底层",
+      "motion": "bunnyBody",
+      "rect": [
+        19,
+        1,
+        1089,
+        1420
+      ]
+    },
+    {
+      "file": "hood-inner.png",
+      "name": "Hood_Inner · 帽内补绘",
+      "motion": "bunnyInner",
+      "rect": [
+        338,
+        140,
+        764,
+        518
+      ]
+    },
+    {
+      "file": "neck.png",
+      "name": "Neck · 下巴重叠与领口过渡",
+      "motion": "bunnyNeck",
+      "rect": [
+        507,
+        409,
+        650,
+        540
+      ]
+    },
+    {
+      "file": "hood-edge.png",
+      "name": "Hood_Edge · 前景帽檐",
+      "motion": "bunnyEdge",
+      "rect": [
+        337,
+        39,
+        776,
+        527
+      ]
+    }
+  ]
+}

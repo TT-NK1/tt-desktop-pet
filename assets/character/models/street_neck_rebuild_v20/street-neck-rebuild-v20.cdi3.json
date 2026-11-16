@@ -1,0 +1,224 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "ParamAngleX",
+			"GroupId": "",
+			"Name": "角度 X"
+		},
+		{
+			"Id": "ParamAngleY",
+			"GroupId": "",
+			"Name": "角度 Y"
+		},
+		{
+			"Id": "ParamAngleZ",
+			"GroupId": "",
+			"Name": "角度 Z"
+		},
+		{
+			"Id": "ParamEyeLOpen",
+			"GroupId": "",
+			"Name": "左眼 开闭"
+		},
+		{
+			"Id": "ParamEyeLSmile",
+			"GroupId": "",
+			"Name": "左眼 微笑"
+		},
+		{
+			"Id": "ParamEyeROpen",
+			"GroupId": "",
+			"Name": "右眼 开闭"
+		},
+		{
+			"Id": "ParamEyeRSmile",
+			"GroupId": "",
+			"Name": "右眼 微笑"
+		},
+		{
+			"Id": "ParamEyeWetness",
+			"GroupId": "",
+			"Name": "泪光"
+		},
+		{
+			"Id": "ParamEyeBallX",
+			"GroupId": "",
+			"Name": "眼珠 X"
+		},
+		{
+			"Id": "ParamEyeBallY",
+			"GroupId": "",
+			"Name": "眼珠 Y"
+		},
+		{
+			"Id": "ParamBrowLY",
+			"GroupId": "",
+			"Name": "左眉 上下"
+		},
+		{
+			"Id": "ParamBrowRY",
+			"GroupId": "",
+			"Name": "右眉 上下"
+		},
+		{
+			"Id": "ParamBrowLX",
+			"GroupId": "",
+			"Name": "左眉 左右"
+		},
+		{
+			"Id": "ParamBrowRX",
+			"GroupId": "",
+			"Name": "右眉 左右"
+		},
+		{
+			"Id": "ParamBrowLAngle",
+			"GroupId": "",
+			"Name": "左眉 角度"
+		},
+		{
+			"Id": "ParamBrowRAngle",
+			"GroupId": "",
+			"Name": "右眉 角度"
+		},
+		{
+			"Id": "ParamBrowLForm",
+			"GroupId": "",
+			"Name": "左眉 変形"
+		},
+		{
+			"Id": "ParamBrowRForm",
+			"GroupId": "",
+			"Name": "右眉 変形"
+		},
+		{
+			"Id": "ParamMouthForm",
+			"GroupId": "",
+			"Name": "嘴 变形"
+		},
+		{
+			"Id": "ParamMouthOpenY",
+			"GroupId": "",
+			"Name": "嘴 开闭"
+		},
+		{
+			"Id": "ParamCheek",
+			"GroupId": "",
+			"Name": "脸颊泛红"
+		},
+		{
+			"Id": "ParamBodyAngleX",
+			"GroupId": "",
+			"Name": "身体旋转 X"
+		},
+		{
+			"Id": "ParamBodyAngleY",
+			"GroupId": "",
+			"Name": "身体旋转 Y"
+		},
+		{
+			"Id": "ParamBodyAngleZ",
+			"GroupId": "",
+			"Name": "身体旋转 Z"
+		},
+		{
+			"Id": "ParamBreath",
+			"GroupId": "",
+			"Name": "呼吸"
+		},
+		{
+			"Id": "ParamHairFront",
+			"GroupId": "",
+			"Name": "摇动 前发"
+		},
+		{
+			"Id": "ParamHairSide",
+			"GroupId": "",
+			"Name": "摇动 侧发"
+		},
+		{
+			"Id": "ParamHairBack",
+			"GroupId": "",
+			"Name": "摇动 后发"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "Part18",
+			"Name": "Neck-artmesh-import.psd"
+		},
+		{
+			"Id": "Part17",
+			"Name": "street-body-layered-import.psd"
+		},
+		{
+			"Id": "Part16",
+			"Name": "street-neck-tilt-overlap-import.psd"
+		},
+		{
+			"Id": "Part15",
+			"Name": "street-neck-underlay-import.psd"
+		},
+		{
+			"Id": "Part14",
+			"Name": "street-body-placement-import.psd"
+		},
+		{
+			"Id": "Part13",
+			"Name": "EyeWetness-import.psd"
+		},
+		{
+			"Id": "Part12",
+			"Name": "expression-blush.psd"
+		},
+		{
+			"Id": "Part11",
+			"Name": "expression-mouth-plates.psd"
+		},
+		{
+			"Id": "Part10",
+			"Name": "ear-hair-underlay.psd"
+		},
+		{
+			"Id": "Part9",
+			"Name": "cubism-head-v3-materials.psd"
+		},
+		{
+			"Id": "Part",
+			"Name": "cubism-eye-aperture-masks.psd(未找到对应图层)"
+		},
+		{
+			"Id": "Part2",
+			"Name": "Hair Accessories"
+		},
+		{
+			"Id": "Part3",
+			"Name": "Hair Crown"
+		},
+		{
+			"Id": "Part4",
+			"Name": "Hair Front"
+		},
+		{
+			"Id": "Part5",
+			"Name": "Hair Side"
+		},
+		{
+			"Id": "Part6",
+			"Name": "Face Features"
+		},
+		{
+			"Id": "Part7",
+			"Name": "Head Base"
+		},
+		{
+			"Id": "Neck",
+			"Name": "Neck"
+		},
+		{
+			"Id": "Part8",
+			"Name": "Hair Back"
+		}
+	]
+}

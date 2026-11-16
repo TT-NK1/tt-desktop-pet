@@ -1,0 +1,296 @@
+{
+  "street": {
+    "name": "日常休闲",
+    "model": "models/street_neck_rebuild_v20/street_neck_rebuild_v20.model3.json",
+    "motions": {
+      "look_around": {
+        "group": "LookAround",
+        "index": 0
+      },
+      "reading": {
+        "group": "Reading",
+        "index": 0,
+        "continuous": true
+      },
+      "listening_music": {
+        "group": "ListeningMusic",
+        "index": 0,
+        "continuous": true
+      }
+    },
+    "expressions": {
+      "normal": "E01",
+      "smile": "E02",
+      "happy": "E03",
+      "puzzled": "E04",
+      "surprised": "E05",
+      "shy": "E06",
+      "focused": "E07",
+      "annoyed": "E08",
+      "aggrieved": "E09",
+      "sleepy": "Sleepy"
+    },
+    "parameter_aliases": {},
+    "capabilities": [
+      "breathing",
+      "blink_overlay",
+      "gaze",
+      "hair_sway",
+      "upper_body_sway"
+    ],
+    "expression_labels": {
+      "normal": "普通",
+      "smile": "微笑",
+      "happy": "开心",
+      "puzzled": "疑惑",
+      "surprised": "惊讶",
+      "shy": "害羞",
+      "focused": "专注",
+      "annoyed": "生气",
+      "aggrieved": "委屈",
+      "sleepy": "困倦"
+    },
+    "native_mouth": true,
+    "head_follow": true,
+    "special_actions": {
+      "reading": "看书",
+      "listening_music": "听音乐"
+    }
+  },
+  "gothic": {
+    "model": "models/street_neck_rebuild_v20/street_neck_rebuild_v20.model3.json",
+    "motions": {
+      "look_around": {
+        "group": "OutfitLookAround",
+        "index": 0
+      },
+      "afternoon_tea": {
+        "group": "tea",
+        "index": 0,
+        "continuous": true
+      },
+      "embroidery": {
+        "group": "handcraft",
+        "index": 0,
+        "continuous": true
+      }
+    },
+    "expressions": {
+      "normal": "E01",
+      "smile": "E02",
+      "happy": "E03",
+      "puzzled": "E04",
+      "surprised": "E05",
+      "shy": "E06",
+      "focused": "E07",
+      "annoyed": "E08",
+      "aggrieved": "E09",
+      "sleepy": "Sleepy"
+    },
+    "name": "哥特服",
+    "special_actions": {
+      "afternoon_tea": "下午茶",
+      "embroidery": "刺绣手工"
+    },
+    "expression_labels": {
+      "normal": "普通",
+      "smile": "微笑",
+      "happy": "开心",
+      "puzzled": "疑惑",
+      "surprised": "惊讶",
+      "shy": "害羞",
+      "focused": "专注",
+      "annoyed": "生气",
+      "aggrieved": "委屈",
+      "sleepy": "困倦"
+    },
+    "capabilities": [
+      "breathing",
+      "blink_overlay",
+      "gaze",
+      "hair_sway",
+      "upper_body_sway"
+    ],
+    "parameter_aliases": {},
+    "native_mouth": true,
+    "head_follow": true,
+    "body_variant": "gothic"
+  },
+  "maid": {
+    "model": "models/street_neck_rebuild_v20/street_neck_rebuild_v20.model3.json",
+    "motions": {
+      "look_around": {
+        "group": "OutfitLookAround",
+        "index": 0
+      },
+      "serve_tea": {
+        "group": "serving",
+        "index": 0,
+        "continuous": true
+      },
+      "tidy_clean": {
+        "group": "cleaning",
+        "index": 0,
+        "continuous": true
+      }
+    },
+    "expressions": {
+      "normal": "E01",
+      "smile": "E02",
+      "happy": "E03",
+      "puzzled": "E04",
+      "surprised": "E05",
+      "shy": "E06",
+      "focused": "E07",
+      "annoyed": "E08",
+      "aggrieved": "E09",
+      "sleepy": "Sleepy"
+    },
+    "name": "女仆装",
+    "special_actions": {
+      "serve_tea": "端茶",
+      "tidy_clean": "整理清洁"
+    },
+    "expression_labels": {
+      "normal": "普通",
+      "smile": "微笑",
+      "happy": "开心",
+      "puzzled": "疑惑",
+      "surprised": "惊讶",
+      "shy": "害羞",
+      "focused": "专注",
+      "annoyed": "生气",
+      "aggrieved": "委屈",
+      "sleepy": "困倦"
+    },
+    "capabilities": [
+      "breathing",
+      "blink_overlay",
+      "gaze",
+      "hair_sway",
+      "upper_body_sway"
+    ],
+    "parameter_aliases": {},
+    "native_mouth": true,
+    "head_follow": true,
+    "body_variant": "maid"
+  },
+  "bunny_hoodie": {
+    "model": "models/street_neck_rebuild_v20/street_neck_rebuild_v20.model3.json",
+    "motions": {
+      "look_around": {
+        "group": "OutfitLookAround",
+        "index": 0
+      },
+      "hug_plush": {
+        "group": "hug",
+        "index": 0,
+        "continuous": true
+      },
+      "stretching": {
+        "group": "stretch",
+        "index": 0,
+        "continuous": true
+      }
+    },
+    "expressions": {
+      "normal": "E01",
+      "smile": "E02",
+      "happy": "E03",
+      "puzzled": "E04",
+      "surprised": "E05",
+      "shy": "E06",
+      "focused": "E07",
+      "annoyed": "E08",
+      "aggrieved": "E09",
+      "sleepy": "Sleepy"
+    },
+    "name": "兔耳卫衣",
+    "special_actions": {
+      "hug_plush": "抱玩偶",
+      "stretching": "伸懒腰"
+    },
+    "expression_labels": {
+      "normal": "普通",
+      "smile": "微笑",
+      "happy": "开心",
+      "puzzled": "疑惑",
+      "surprised": "惊讶",
+      "shy": "害羞",
+      "focused": "专注",
+      "annoyed": "生气",
+      "aggrieved": "委屈",
+      "sleepy": "困倦"
+    },
+    "capabilities": [
+      "breathing",
+      "blink_overlay",
+      "gaze",
+      "hair_sway",
+      "upper_body_sway"
+    ],
+    "parameter_aliases": {},
+    "native_mouth": true,
+    "head_follow": true,
+    "body_variant": "bunny"
+  },
+  "sailor": {
+    "model": "models/street_neck_rebuild_v20/street_neck_rebuild_v20.model3.json",
+    "motions": {
+      "look_around": {
+        "group": "OutfitLookAround",
+        "index": 0
+      },
+      "use_phone": {
+        "group": "phone",
+        "index": 0,
+        "continuous": true
+      },
+      "take_photo": {
+        "group": "photo",
+        "index": 0,
+        "continuous": true
+      }
+    },
+    "expressions": {
+      "normal": "E01",
+      "smile": "E02",
+      "happy": "E03",
+      "puzzled": "E04",
+      "surprised": "E05",
+      "shy": "E06",
+      "focused": "E07",
+      "annoyed": "E08",
+      "aggrieved": "E09",
+      "sleepy": "Sleepy"
+    },
+    "name": "水手服",
+    "special_actions": {
+      "use_phone": "玩手机",
+      "take_photo": "拍照"
+    },
+    "expression_labels": {
+      "normal": "普通",
+      "smile": "微笑",
+      "happy": "开心",
+      "puzzled": "疑惑",
+      "surprised": "惊讶",
+      "shy": "害羞",
+      "focused": "专注",
+      "annoyed": "生气",
+      "aggrieved": "委屈",
+      "sleepy": "困倦"
+    },
+    "capabilities": [
+      "breathing",
+      "blink_overlay",
+      "gaze",
+      "hair_sway",
+      "upper_body_sway"
+    ],
+    "parameter_aliases": {},
+    "native_mouth": true,
+    "head_follow": true,
+    "body_variant": "sailor"
+  }
+}

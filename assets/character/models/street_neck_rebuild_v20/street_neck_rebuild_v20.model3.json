@@ -1,0 +1,85 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "street-neck-rebuild-v20.moc3",
+    "Textures": [
+      "street-neck-rebuild-v20.2048/texture_00.png",
+      "street-neck-rebuild-v20.2048/texture_01.png",
+      "street-neck-rebuild-v20.2048/texture_02.png"
+    ],
+    "DisplayInfo": "street-neck-rebuild-v20.cdi3.json",
+    "Expressions": [
+      {
+        "Name": "E01",
+        "File": "expressions/E01.exp3.json"
+      },
+      {
+        "Name": "E02",
+        "File": "expressions/E02.exp3.json"
+      },
+      {
+        "Name": "E03",
+        "File": "expressions/E03.exp3.json"
+      },
+      {
+        "Name": "E04",
+        "File": "expressions/E04.exp3.json"
+      },
+      {
+        "Name": "E05",
+        "File": "expressions/E05.exp3.json"
+      },
+      {
+        "Name": "E06",
+        "File": "expressions/E06.exp3.json"
+      },
+      {
+        "Name": "E07",
+        "File": "expressions/E07.exp3.json"
+      },
+      {
+        "Name": "E08",
+        "File": "expressions/E08.exp3.json"
+      },
+      {
+        "Name": "E09",
+        "File": "expressions/E09.exp3.json"
+      },
+      {
+        "Name": "Sleepy",
+        "File": "expressions/Sleepy.exp3.json"
+      }
+    ],
+    "Motions": {
+      "LookAround": [
+        {
+          "File": "motions/look_around.motion3.json",
+          "FadeInTime": 0.6,
+          "FadeOutTime": 0.8
+        }
+      ],
+      "OutfitLookAround": [
+        {
+          "File": "motions/outfit_look_around.motion3.json",
+          "FadeInTime": 0.6,
+          "FadeOutTime": 0.8
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": [
+        "ParamEyeLOpen",
+        "ParamEyeROpen"
+      ]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": []
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "id": "tea",
+  "width": 1199,
+  "height": 1312,
+  "anchor": [
+    621,
+    419
+  ],
+  "scale": 1.02,
+  "roll": 0,
+  "face": [
+    -2,
+    -17.5,
+    -0.14,
+    -0.58,
+    1
+  ],
+  "irisDownPixels": 1.2,
+  "fit": 1.82,
+  "action": "tea",
+  "layers": [
+    {
+      "name": "原服装底层与补绘区",
+      "file": "gesture-body.png",
+      "motion": "body",
+      "rect": [
+        312,
+        379,
+        927,
+        1310
+      ]
+    },
+    {
+      "name": "左侧过膝袜",
+      "file": "overknee-left.png",
+      "motion": "overknee",
+      "rect": [
+        368,
+        629,
+        567,
+        1100
+      ]
+    },
+    {
+      "name": "右侧过膝袜",
+      "file": "overknee-right.png",
+      "motion": "overknee",
+      "rect": [
+        510,
+        634,
+        758,
+        1100
+      ]
+    },
+    {
+      "name": "格纹裙与蕾丝裙边",
+      "file": "skirt.png",
+      "motion": "skirt",
+      "rect": [
+        122,
+        840,
+        376,
+        1243
+      ]
+    },
+    {
+      "name": "右侧格纹裙与蕾丝裙边",
+      "file": "skirt-right.png",
+      "motion": "skirt",
+      "rect": [
+        665,
+        829,
+        1098,
+        1258
+      ]
+    },
+    {
+      "name": "肩部蕾丝左片",
+      "file": "lace.png",
+      "motion": "lace",
+      "rect": [
+        385,
+        441,
+        484,
+        512
+      ]
+    },
+    {
+      "name": "肩部蕾丝右片",
+      "file": "lace-right.png",
+      "motion": "lace",
+      "rect": [
+        712,
+        430,
+        807,
+        509
+      ]
+    },
+    {
+      "name": "右袖口与十字饰件",
+      "file": "cuff-right.png",
+      "motion": "handR",
+      "rect": [
+        698,
+        616,
+        753,
+        682
+      ],
+      "pivot": [
+        711,
+        630
+      ]
+    },
+    {
+      "name": "完整茶碟椭圆与金边",
+      "file": "saucer-clean.png",
+      "motion": "prop",
+      "rect": [
+        489,
+        585,
+        695,
+        626
+      ]
+    },
+    {
+      "name": "茶杯足下与茶碟接触阴影",
+      "file": "cup-contact-shadow.png",
+      "motion": "teaContact",
+      "rect": [
+        559,
+        586,
+        650,
+        604
+      ]
+    },
+    {
+      "name": "托碟手掌、手指和前侧拇指",
+      "file": "saucer-hand.png",
+      "motion": "handR",
+      "rect": [
+        580,
+        583,
+        753,
+        667
+      ]
+    },
+    {
+      "name": "举杯袖口与前臂连续底布",
+      "file": "gesture-sleeve.png",
+      "motion": "teaSleeve",
+      "rect": [
+        382,
+        557,
+        514,
+        695
+      ]
+    },
+    {
+      "name": "花纹瓷杯、杯沿与净边杯把",
+      "file": "gesture-porcelain.png",
+      "motion": "teaCup",
+      "rect": [
+        526,
+        502,
+        678,
+        594
+      ]
+    },
+    {
+      "name": "提杯手掌与杯把前方指尖",
+      "file": "gesture-grip.png",
+      "motion": "teaGrip",
+      "rect": [
+        447,
+        510,
+        562,
+        615
+      ]
+    }
+  ],
+  "gesture": {
+    "interval": [
+      25,
+      60
+    ],
+    "hold": [
+      0.8,
+      1.5
+    ],
+    "close": 1.18,
+    "open": 1.44
+  },
+  "sip": {
+    "lift": 130,
+    "shift": 9,
+    "tilt": -5,
+    "pivot": [
+      602,
+      515
+    ],
+    "restDrop": 5
+  }
+}

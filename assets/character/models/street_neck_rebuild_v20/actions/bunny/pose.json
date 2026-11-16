@@ -1,0 +1,78 @@
+{
+  "id": "bunny",
+  "name": "兔耳卫衣",
+  "width": 1199,
+  "height": 1312,
+  "fit": 1.82,
+  "anchor": [
+    627,
+    445
+  ],
+  "scale": 1.035,
+  "roll": 0,
+  "face": [
+    0,
+    0,
+    0,
+    0,
+    0.93
+  ],
+  "sharedIdle": true,
+  "hood": true,
+  "bunnyRepair": {
+    "leftEar": [
+      445,
+      138
+    ],
+    "rightEar": [
+      731,
+      129
+    ]
+  },
+  "layers": [
+    {
+      "file": "body.png",
+      "name": "Body · 连续肩袖与帽身底层",
+      "motion": "bunnyBody",
+      "rect": [
+        150,
+        -13,
+        1055,
+        1320
+      ]
+    },
+    {
+      "file": "hood-inner.png",
+      "name": "Hood_Inner · 帽内补绘",
+      "motion": "bunnyInner",
+      "rect": [
+        357,
+        129,
+        832,
+        500
+      ]
+    },
+    {
+      "file": "neck.png",
+      "name": "Neck · 下巴重叠与领口过渡",
+      "motion": "bunnyNeck",
+      "rect": [
+        554,
+        396,
+        703,
+        522
+      ]
+    },
+    {
+      "file": "hood-edge.png",
+      "name": "Hood_Edge · 前景帽檐",
+      "motion": "bunnyEdge",
+      "rect": [
+        342,
+        -8,
+        878,
+        489
+      ]
+    }
+  ]
+}

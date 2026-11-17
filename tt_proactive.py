@@ -7,7 +7,7 @@ from datetime import datetime
 
 DEFAULTS = dict(enabled=False, voice=False, speech_enabled=False, reply_voice=False,
                 rate=0, muted=False, volume=50, voice_name='',
-                speech_style='auto', emotion_strength=STRENGTH, fast_speech=False,
+                speech_style='auto', emotion_strength=STRENGTH, fast_speech=False, pause_voice_in_games=True,
                 start=540, end=1320, dnd=False, dnd_start=1320, dnd_end=540,
                 interval=120, limit=3)
 PHRASES = (

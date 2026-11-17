@@ -14,16 +14,19 @@ from PySide6.QtWidgets import (
     QLabel, QListWidget, QListWidgetItem, QMessageBox, QPushButton, QSizePolicy, QVBoxLayout, QWidget,
 )
 
-from tt_chat_images import ChatImage, IMAGE_NOTE, MAX_ATTACHMENTS, read_image
+from tt_chat_images import (ChatImage, IMAGE_NOTE, IMAGE_SUFFIXES, MAX_ATTACHMENTS,
+                            clipboard_image_paths, has_clipboard_image, read_clipboard_image, read_image)
 from tt_chat_messages import ChatMessages
 from tt_character_dashboard import CharacterDashboard
+from tt_media_recognition import MediaRecognition
+from tt_share_content import music_reply
+from tt_multilingual import MEDIA_SUFFIXES
 from tt_plus_search import plain_words, without_links
 from tt_theme import qt_file_dialog
 from tt_voice_profiles import with_reference
 
 
 TEXT_SUFFIXES = {'.txt', '.md', '.markdown', '.csv', '.json', '.log', '.xml', '.yaml', '.yml', '.tsv', '.srt', '.vtt'}
-IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp'}
 
 
 def small_button(text, callback, layout, name='chatTool'):
@@ -58,6 +61,7 @@ class ConversationUI:
         self.setAcceptDrops(True)
         self.input.setAcceptDrops(False)
         self.input.viewport().setAcceptDrops(False)
+        self.input.paste_attachment = self.add_clipboard_attachment
 
         layout = QVBoxLayout(page)
         layout.setContentsMargins(12, 7, 12, 11)
@@ -103,7 +107,8 @@ class ConversationUI:
         compose.addWidget(self.input)
         actions = QHBoxLayout()
         small_button('＋ 附件', self.pick_attachments, actions).setToolTip(
-            '可同时选择文本和图片。发送前可预览图片，历史会话仅保存文字。')
+            '支持文字、图片、音频和视频。可按 Ctrl+V 粘贴截图。音视频会先在本机提取转写、字幕和抽样画面。')
+        self.recognition = MediaRecognition(self)
         actions.addStretch()
         self.pause_voice = small_button('暂停朗读', self.toggle_voice, actions)
         self.stop_voice = small_button('停止朗读', self.stop_voice_now, actions)
@@ -152,8 +157,15 @@ class ConversationUI:
             return
         self.history_button.setEnabled(not self.busy())
         self.stop_button.setVisible(self.pending_id is not None)
+        processing = getattr(self, 'recognition', None)
         self.send_button.setEnabled(self.send_button.isEnabled()
-                                    and (bool(self.attachments) or bool(self.input.toPlainText().strip())))
+                                    and (bool(self.attachments) or bool(self.input.toPlainText().strip()))
+                                    and not (processing and processing.busy))
+
+    def begin_shutdown(self):
+        if hasattr(self, 'recognition'):
+            self.recognition.cancel()
+        return super().begin_shutdown()
 
     def show_pending_input(self, created, prompt, followup):
         self.delta_timer.stop()
@@ -174,19 +186,26 @@ class ConversationUI:
             self.character_state.setText(message.rstrip('…'))
 
     def flush_chat_delta(self):
-        answer = (plain_words(self.pending_answer, markdown=True) if self._reply_links
-                  else without_links(self.pending_answer, markdown=True))
+        text = music_reply(self.pending_answer, streaming=True)[0]
+        answer = plain_words(text, markdown=True) if self._reply_links else without_links(text, markdown=True)
         if answer:
             self.chat_messages.set_reply(answer, True)
             self.character_state.setText('正在生成')
 
     def save_result(self, answer, status):
+        if status != 'completed':
+            answer = music_reply(answer, streaming=True)[0]
         if self.pending_id is not None:
-            if status == 'completed' and (item := getattr(self.worker, 'media_item', None)):
-                self.media.save_card(self.pending_id, item)
+            cards = ()
+            if status == 'completed':
+                cards = getattr(self.worker, 'media_items', ())
+                if not cards and (item := getattr(self.worker, 'media_item', None)):
+                    cards = (item,)
+                if cards:
+                    self.media.save_cards(self.pending_id, cards)
             self.delta_timer.stop()
             missing = '已停止生成。' if status == 'stopped' else '这条回复未完成，可以重新生成。'
-            self.chat_messages.set_reply(answer or missing,
+            self.chat_messages.set_reply(answer if cards else answer or missing,
                                          False, paced=status == 'completed')
             self.character_state.setText('已回复' if status == 'completed' else '回复中断')
             if status == 'completed':
@@ -217,13 +236,17 @@ class ConversationUI:
         QApplication.clipboard().setText(text)
         self.status.setText('已复制回复')
 
+    def describe_images(self, images):
+        self.recognition.describe('识别图片中的语言和能读清的文字，并简要说出画面内容。',
+                                  tuple(ChatImage(image) for image in images))
+
     def read_reply(self, turn, text, *, regenerate=False):
         if self.busy():
             self.status.setText('回复生成完成后可以朗读。')
             return
         settings = with_reference(self.db, self.pro_settings)
-        if not settings['speech_enabled'] or settings['muted'] or not settings.get('voice_reference'):
-            self.status.setText('请在「聊天与语音设置」启用语音、解除静音并选择参考音色。')
+        if not settings['speech_enabled'] or settings['muted']:
+            self.status.setText('请在「聊天与语音设置」启用语音并解除静音。')
             return
         self.replay_reply(turn, text, settings, regenerate=regenerate)
         self.refresh_voice_controls()
@@ -257,7 +280,7 @@ class ConversationUI:
 
     def voice_changed(self, status):
         self.refresh_voice_controls()
-        active_status = ('语音加载中', '生成中', '播放中')
+        active_status = ('语音加载中', '语音合成中', '播放中')
         if status.startswith((*active_status, '失败', '没有可朗读')) and (not self.busy() or self.pending_id is None):
             self.status.setText(status)
         elif status in ('语音待机', '已停止') and self.status.text().startswith(active_status):
@@ -298,7 +321,7 @@ class ConversationUI:
             if status == 'stopped':
                 answer = ''
             elif hasattr(self, 'media'):
-                answer = self.media.context_text(answer, self.media.card_for(turn))
+                answer = self.media.context_text(answer, self.media.cards_for(turn))
             context.append((IMAGE_NOTE.sub('', prompt) if images else prompt, answer, images))
         return context
 
@@ -429,8 +452,8 @@ class ConversationUI:
             self.new_chat()
 
     def pick_attachments(self):
-        extensions = ' '.join('*'+suffix for suffix in sorted(TEXT_SUFFIXES | IMAGE_SUFFIXES))
-        paths, _ = QFileDialog.getOpenFileNames(self, '添加附件', '', f'文本和图片 ({extensions})',
+        extensions = ' '.join('*'+suffix for suffix in sorted(TEXT_SUFFIXES | IMAGE_SUFFIXES | MEDIA_SUFFIXES))
+        paths, _ = QFileDialog.getOpenFileNames(self, '添加附件', '', f'文字、图片和音视频 ({extensions})',
                                               options=qt_file_dialog(self))
         self.add_attachments(paths)
 
@@ -444,6 +467,30 @@ class ConversationUI:
         if self.input.isEnabled() and event.mimeData().hasUrls():
             self.add_attachments([url.toLocalFile() for url in event.mimeData().urls() if url.isLocalFile()])
             event.acceptProposedAction()
+
+    @staticmethod
+    def image_attachment(image, name, path=None):
+        photo = ChatImage(image)
+        return dict(path=path, name=name, text='', image=photo.preview, chat_image=photo)
+
+    def add_clipboard_attachment(self, source):
+        paths = clipboard_image_paths(source)
+        if paths and not has_clipboard_image(source):
+            self.add_attachments(paths)
+            return
+        if len(self.attachments) >= MAX_ATTACHMENTS:
+            self.status.setText(f'一次最多添加 {MAX_ATTACHMENTS} 个附件。')
+            return
+        try:
+            image = read_clipboard_image(source)
+        except ValueError as error:
+            if paths:
+                self.add_attachments(paths)
+            else:
+                self.status.setText(str(error))
+            return
+        self.attachments.append(self.image_attachment(image, '剪贴板图片'))
+        self.render_attachments()
 
     def add_attachments(self, paths):
         if not self.input.isEnabled():
@@ -470,16 +517,17 @@ class ConversationUI:
                     if not entry['text'].strip() or '\x00' in entry['text'] or len(entry['text']) > 5200:
                         raise ValueError('请选择非空文本，单个附件最多 5200 字符。')
                 elif path.suffix.lower() in IMAGE_SUFFIXES and path.is_file():
-                    image = read_image(path)
-                    entry['chat_image'] = ChatImage(image)
-                    entry['image'] = image.scaled(QSize(600, 450), Qt.AspectRatioMode.KeepAspectRatio,
-                                                   Qt.TransformationMode.SmoothTransformation)
+                    entry = self.image_attachment(read_image(path), path.name, path)
+                elif path.suffix.lower() in MEDIA_SUFFIXES and path.is_file():
+                    entry.update(media=True, processing=True, frames=[])
                 else:
-                    raise ValueError('请选择支持的文本文件或图片。')
+                    raise ValueError('请选择支持的文字、图片、音频或视频文件。')
             except (UnicodeError, OSError, ValueError) as error:
                 errors.append(f'{path.name} · {error}' if isinstance(error, ValueError) and not isinstance(error, UnicodeError) else f'{path.name} 无法读取。')
                 continue
             self.attachments.append(entry)
+            if entry.get('media'):
+                self.recognition.add(entry)
         self.render_attachments()
         if errors:
             self.status.setText(errors[0])
@@ -498,7 +546,9 @@ class ConversationUI:
                 thumb.setPixmap(QPixmap.fromImage(image).scaled(29, 24, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
                 line.addWidget(thumb)
             name = QFontMetrics(self.font()).elidedText(item['name'], Qt.TextElideMode.ElideMiddle, 156)
-            label = QLabel(name + (' · 图片待发送' if image is not None else f" · 待发送 {len(item['text'])} 字符"))
+            suffix = (' · 正在识别' if item.get('processing') else ' · 识别完成' if item.get('media') else
+                      ' · 图片待发送' if image is not None else f" · 待发送 {len(item['text'])} 字符")
+            label = QLabel(name + suffix)
             label.setTextFormat(Qt.TextFormat.PlainText)
             line.addWidget(label, 1)
             small_button('预览', lambda _, value=item: self.preview_attachment(value), line)
@@ -512,8 +562,10 @@ class ConversationUI:
         self.render_attachments()
 
     def clear_image_draft(self):
-        if any(item['chat_image'] is not None for item in self.attachments):
-            self.attachments[:] = [item for item in self.attachments if item['chat_image'] is None]
+        if hasattr(self, 'recognition'):
+            self.recognition.cancel()
+        if any(item['chat_image'] is not None or item.get('media') for item in self.attachments):
+            self.attachments[:] = [item for item in self.attachments if item['chat_image'] is None and not item.get('media')]
             self.render_attachments()
 
     def preview_attachment(self, item):
@@ -539,18 +591,28 @@ class ConversationUI:
     def prepare_prompt(self):
         prompt = self.input.toPlainText().strip()
         files = [item for item in self.attachments if item['text']]
-        if not prompt and self.prepare_images():
-            prompt = '请看看我发的图片，说说你看到了什么。'
+        if not prompt and any(item.get('media') for item in files):
+            prompt = '请根据实际提供的音视频资料识别语言，并说出主要内容。沿用本次对话的语言。'
+        elif not prompt and self.prepare_images():
+            prompt = '请看看我发的图片，说说画面和能读清的文字。沿用本次对话的语言。'
         if not files:
             return prompt
         chunks = [prompt or '请帮我总结以下文本附件。']
-        chunks.extend(f"【文本附件 · {item['name']}】\n{item['text']}\n【附件结束】" for item in files)
+        media_limit = max(500, (5650 - len(prompt) - sum(len(item['text']) for item in files if not item.get('media')))
+                          // max(1, sum(bool(item.get('media')) for item in files)))
+        for item in files:
+            body = item['text'][:media_limit] if item.get('media') else item['text']
+            chunks.append(f"【文本附件 · {item['name']}】\n{body}\n【附件结束】")
         return '\n\n'.join(chunks)
 
     def prepare_images(self):
-        return tuple(item['chat_image'] for item in self.attachments if item['chat_image'] is not None)
+        pictures = [item['chat_image'] for item in self.attachments if item['chat_image'] is not None]
+        frames = [photo for item in self.attachments for photo in item.get('frames', ())]
+        return tuple((pictures + frames)[:MAX_ATTACHMENTS])
 
     def send(self):
+        if self.recognition.busy:
+            return
         sent = super().send()
         if sent:
             self.attachments.clear()

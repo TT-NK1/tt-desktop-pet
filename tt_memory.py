@@ -16,6 +16,8 @@ CATEGORIES = {'semantic':'事实与喜好','episodic':'重要经历','procedural
 TYPES = ('explicit','inferred','temporary','uncertain')
 TOPICS = {
     '音乐': ('音乐','歌曲','歌单','歌手','听歌','爵士','摇滚','流行','轻音乐','古典','jazz','rock','music','歌'),
+    '影视': ('视频','短片','电影','影视','纪录片','动漫','科幻片','恐怖片','动画','剧集','看点什么','b站','哔哩哔哩'),
+    '动物': ('小猫','猫咪','小狗','狗狗','柴犬','仓鼠','宠物'),
     '游戏': ('游戏','像素风','像素','game','ps5','steam'),
     '界面': ('界面','主题','ui','颜色','低饱和','紫色','深色','浅色','鲜艳','果冻','布局'),
     '表达': ('解释','回答','提示词','直接','详细','简短','完整','分步骤','可复制','沟通'),
@@ -374,7 +376,10 @@ class MemoryStore:
                     match = row
                     break
         if match is None and draft.replace:
-            domain = domains(text)
+            # Different films, animals, or music styles can coexist as preferences.
+            domain = domains(text) - {'影视', '动物'}
+            if draft.category == 'semantic' and PREFERENCE.fullmatch(text):
+                domain.discard('音乐')
             candidates = [r for r in rows if domain & domains(r['content'])
                           and (r['status']=='active' or not r['pinned'])] if domain else []
             if len(candidates)==1:
@@ -690,6 +695,56 @@ class MemoryRetriever:
     def __init__(self,store):
         self.store = store
 
+    def media_preferences(self, scope, kind):
+        topics = {'video': {'影视', '动物'}, 'music': {'音乐'}}.get(kind)
+        if not topics:
+            return (), ()
+        artists = set()
+        if kind == 'music':
+            from tt_share_content import JAPANESE_TRACKS, POP_TRACKS
+
+            artists = {normalized(track[1]) for track in POP_TRACKS + JAPANESE_TRACKS}
+        with self.store.connect() as db:
+            if not self.store.get(db, 'chat:' + scope, False):
+                return (), ()
+            rows = db.execute(
+                "SELECT content FROM memory_items WHERE scope=? AND category='semantic' "
+                "AND status='active' AND kind='explicit' AND confidence>=.75 "
+                "AND (valid_until IS NULL OR valid_until>?) ORDER BY confirmed DESC,updated DESC LIMIT 80",
+                (scope, time.time()))
+            choices = {}
+            for (content,) in rows:
+                match = PREFERENCE.fullmatch(content)
+                if (not match or not allowed(content)
+                        or re.match(r'^(?:其实)?(?:以前|原来|之前|我(?:以前|曾经|过去|原来|之前))', content)
+                        or self.store.blocked(db, scope, content)):
+                    continue
+                verb, text = match.groups()
+                listening = (kind == 'music' and (verb == '爱听' or text.startswith('听'))
+                             and not re.search(r'说话|语音|播报|故事|听书|播客|听雨', content))
+                if not listening and normalized(text) not in artists and not topics & domains(content):
+                    continue
+                text = re.sub(r'^(?:刷|看|听)(?=.{2,})', '', clean(text, 56))
+                text = re.sub(r'(?:的?(?:视频|短片)|的?歌曲|的(?:歌|音乐))$', '', text).strip()
+                if len(text) >= 2 and text not in ('这些', '那种', '看视频', '听音乐'):
+                    choices.setdefault(normalized(text), (text, verb in ('不再喜欢', '不喜欢', '讨厌')))
+            preferred = tuple(text for text, avoid in choices.values() if not avoid)
+            avoided = tuple(text for text, avoid in choices.values() if avoid)
+            return preferred[:4], avoided[:8]
+
+    def conversation_preferences(self, scope):
+        """Keep a few explicit speaking preferences available across topics."""
+        with self.store.connect() as db:
+            rows = db.execute(
+                "SELECT content FROM memory_items WHERE scope=? AND category='procedural' "
+                "AND status='active' AND kind='explicit' AND confidence>=.75 "
+                "AND (valid_until IS NULL OR valid_until>?) ORDER BY confirmed DESC,updated DESC LIMIT 40",
+                (scope, time.time()))
+            return [text for (text,) in rows
+                    if re.search(r'聊天|闲聊|说话|语气|口吻|称呼|打招呼|追问|反问', text)
+                    and not re.search(r'代码|报告|文件|论文|日志|表格|提示词', text)
+                    and allowed(text) and not self.store.blocked(db, scope, text)][:3]
+
     def decoration_preferences(self, scope):
         """Read durable chat preferences even during a conversation on another topic."""
         found = {}
@@ -769,13 +824,13 @@ class MemoryRetriever:
             ranked.sort(key=lambda entry:entry[0],reverse=True)
             return [dict(row) for _,row in ranked[:limit]]
 
-    def context(self,scope,query,budget=1000):
+    def context(self,scope,query,budget=1000,*,results=None):
         if not allowed(query):
             return []
         with self.store.connect() as db:
             if self.store.blocked(db,scope,query):
                 return []
-        results = self.search(scope,query)
+        results = self.search(scope,query) if results is None else list(results)
         if self.store.setting('stable:'+scope,False):
             with self.store.connect() as db:
                 profile = db.execute("SELECT m.* FROM memory_profile p JOIN memory_items m ON m.id=p.item "

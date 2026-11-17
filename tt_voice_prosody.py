@@ -3,13 +3,14 @@
 from dataclasses import dataclass
 import io
 import os
+import shutil
 from pathlib import Path
 import re
 import subprocess
 import wave
 
 
-FFMPEG = Path(os.environ.get("TT_FFMPEG", "ffmpeg"))
+FFMPEG = Path(os.environ.get("TT_FFMPEG") or shutil.which("ffmpeg") or "ffmpeg")
 DISTRESS = re.compile(r'好难过|很难过|不开心|好累|很累|累坏了|好烦|很烦|心里难受|想哭|睡不着|有点崩溃|好委屈|撑不住')
 COMFORT = re.compile(r'^(?:嗯[，。 ]*|唔[，。 ]*)?(?:抱抱|别急|不着急|慢慢来|我在呢|先歇一会儿|辛苦了|听起来真的很)')
 CELEBRATION = re.compile(r'^(?:太好了|真棒|恭喜|好耶|哇[，！])')

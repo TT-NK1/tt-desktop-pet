@@ -22,8 +22,9 @@ def profiles(db):
 
 def with_reference(db, settings):
     selection = settings.get("voice_name")
-    row = db.execute("SELECT reference_path FROM tt_voice_profiles WHERE name=?", (selection,)).fetchone()
-    return dict(settings, voice_reference=row[0] if row else "")
+    row = db.execute("SELECT reference_path, reference_text FROM tt_voice_profiles WHERE name=?", (selection,)).fetchone()
+    reference, transcript = row or ("", "")
+    return dict(settings, voice_reference=reference, voice_reference_text=transcript)
 
 
 def add_reference(db, name, source, transcript):

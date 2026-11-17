@@ -1,9 +1,11 @@
 """Run IndexTTS in its own Python interpreter using private stdio pipes."""
 import contextlib
 import ctypes
+import inspect
 import io
 import json
 import os
+import shutil
 from queue import Queue
 import subprocess
 import sys
@@ -20,7 +22,7 @@ from tt_natural_audio import compact_audio, join_audio
 from tt_natural_speech import delivery_plan
 from tt_speech_segments import NATIVE_TOKEN_LIMIT
 
-FFMPEG = Path(os.environ.get("TT_FFMPEG", "ffmpeg"))
+FFMPEG = Path(os.environ.get("TT_FFMPEG") or shutil.which("ffmpeg") or "ffmpeg")
 
 
 def load_model(root, cache_directory=None, *, fp16=True, cuda_kernel=False, deepspeed=False):
@@ -61,12 +63,19 @@ def load_model(root, cache_directory=None, *, fp16=True, cuda_kernel=False, deep
                 self.pending_cache_path = None
 
     weights = root / "checkpoints"
-    model = DesktopIndexTTS(cfg_path=str(weights / "config.yaml"), model_dir=str(weights),
-                            use_fp16=fp16, use_cuda_kernel=cuda_kernel, use_deepspeed=deepspeed,
-                            use_qwen_emo=False, use_accel=False, use_torch_compile=False,
-                            eager_reference_encoder=False, desktop_low_memory=True)
-    model.reference_cache = ReferenceCache(cache_directory or root / "desktop-pet" / "reference-cache",
-                                           model, torch, Path(infer_v2.__file__))
+    accepted = inspect.signature(IndexTTS2.__init__).parameters
+    use_cache = {"eager_reference_encoder", "desktop_low_memory"}.issubset(accepted)
+    optional = dict(use_fp16=fp16, use_cuda_kernel=cuda_kernel, use_deepspeed=deepspeed,
+                    use_qwen_emo=False, use_accel=False, use_torch_compile=False)
+    if use_cache:
+        optional.update(eager_reference_encoder=False, desktop_low_memory=True)
+    model_type = DesktopIndexTTS if use_cache else IndexTTS2
+    model = model_type(cfg_path=str(weights / "config.yaml"), model_dir=str(weights),
+                       **{name: value for name, value in optional.items() if name in accepted})
+    model.desktop_reference_cache = use_cache
+    if use_cache:
+        model.reference_cache = ReferenceCache(cache_directory or root / "desktop-pet" / "reference-cache",
+                                               model, torch, Path(infer_v2.__file__))
     return torch, model
 
 
@@ -79,30 +88,37 @@ def check_cancel(cancel):
         raise Cancelled
 
 
-def render(model, text, options, cancel):
+def cancellation_criteria(cancel):
     from transformers import StoppingCriteria, StoppingCriteriaList
 
     class CheckCancellation(StoppingCriteria):
         def __call__(self, input_ids, scores, **kwargs):
             check_cancel(cancel)
             return False
+    return StoppingCriteriaList([CheckCancellation()])
 
+
+def change_pace(pcm, rate, duration):
+    result = subprocess.run(
+        [str(FFMPEG), "-hide_banner", "-loglevel", "error", "-nostdin",
+         "-f", "s16le", "-ar", str(rate), "-ac", "1", "-i", "pipe:0",
+         "-af", f"atempo={1/duration:.8f}", "-f", "s16le", "pipe:1"],
+        input=pcm.tobytes(), stdout=subprocess.PIPE, check=True, timeout=30,
+        creationflags=subprocess.CREATE_NO_WINDOW)
+    return np.frombuffer(result.stdout, dtype="<i2")
+
+
+def render(model, text, options, cancel):
     reference, phrase = text
     options = dict(options)
     duration = options.pop("duration_factor")
     compact = options.pop("compact_followup", False)
     rate, pcm = model.infer(spk_audio_prompt=str(reference),text=phrase,output_path=None,
-                            stopping_criteria=StoppingCriteriaList([CheckCancellation()]),**options)
+                            stopping_criteria=cancellation_criteria(cancel),**options)
     check_cancel(cancel)
     pcm = pcm.reshape(-1).astype("<i2",copy=False)
     if duration!=1:
-        result = subprocess.run(
-            [str(FFMPEG),"-hide_banner","-loglevel","error","-nostdin",
-             "-f","s16le","-ar",str(rate),"-ac","1","-i","pipe:0",
-             "-af",f"atempo={1/duration:.8f}","-f","s16le","pipe:1"],
-            input=pcm.tobytes(),stdout=subprocess.PIPE,check=True,timeout=30,
-            creationflags=subprocess.CREATE_NO_WINDOW)
-        pcm = np.frombuffer(result.stdout,dtype="<i2")
+        pcm = change_pace(pcm, rate, duration)
     audio = pcm.astype("float32")/32768
     return (compact_audio(audio,rate,FFMPEG) if compact else audio),rate
 
@@ -122,7 +138,8 @@ def synthesize(torch, model, request, cancel):
     if not chunks:
         raise ValueError("没有可朗读的文字")
     with torch.inference_mode():
-        model.activate_reference(reference)
+        if getattr(model, "desktop_reference_cache", False):
+            model.activate_reference(reference)
         rendered = []
         for text,options in chunks:
             check_cancel(cancel)
@@ -200,7 +217,7 @@ def send(response, data=b""):
     stream.flush()
 
 
-def main(root, memory_pipe):
+def main(root, memory_pipe, qwen_runtime=None):
     sys.path.insert(0, str(root / "official-source"))
     sys.path.insert(0, str(root))
     from indextts_gpu_slot import GpuSlotBusy, claim_gpu
@@ -231,17 +248,21 @@ def main(root, memory_pipe):
             if model is None:
                 started = time.monotonic()
                 slot = claim_gpu(root)
-                print("IndexTTS loading local model",file=sys.stderr,flush=True)
+                print("TT loading local voice model",file=sys.stderr,flush=True)
                 try:
                     with contextlib.redirect_stdout(sys.stderr):
                         import torch
                         torch.set_num_threads(current[0])
-                        torch, model = load_model(root)
+                        if qwen_runtime is None:
+                            torch, model = load_model(root)
+                        else:
+                            from tt_qwen_voice import ForeignVoice
+                            model = ForeignVoice(qwen_runtime)
                 except Exception:
                     slot.close()
                     slot = None
                     raise
-                print(f"IndexTTS ready in {time.monotonic() - started:.2f}s", file=sys.stderr, flush=True)
+                print(f"TT voice ready in {time.monotonic() - started:.2f}s", file=sys.stderr, flush=True)
                 if memory_pipe:
                     send(dict(model_ready=True, free_mib=int(torch.cuda.mem_get_info()[0] / MIB)))
             if budget!=current:
@@ -250,12 +271,22 @@ def main(root, memory_pipe):
             check_cancel(cancel)
             if warmup:
                 reference = request.get("reference")
-                if reference and Path(reference).is_file():
+                if (qwen_runtime is None and reference and Path(reference).is_file()
+                        and getattr(model, "desktop_reference_cache", False)):
                     with torch.inference_mode():
                         model.activate_reference(Path(reference))
             else:
                 with open(os.devnull,"w",encoding="utf-8") as quiet, contextlib.redirect_stdout(quiet):
-                    data = synthesize(torch,model,request,cancel)
+                    if qwen_runtime is None:
+                        data = synthesize(torch,model,request,cancel)
+                    else:
+                        from tt_qwen_voice import to_wave
+                        with torch.inference_mode():
+                            audio, sample_rate = model.render(request, cancellation_criteria(cancel))
+                        if rate_adjustment := max(-100, min(100, int(request.get("rate", 0)))):
+                            pcm = np.clip(audio.reshape(-1) * 32768, -32768, 32767).astype("<i2")
+                            audio = change_pace(pcm, sample_rate, 1 / (1 + rate_adjustment / 200))
+                        data = to_wave(audio, sample_rate)
                 check_cancel(cancel)
                 if not memory_pipe:
                     with Path(request["output"]).open("xb") as output:
@@ -283,4 +314,6 @@ def main(root, memory_pipe):
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]).resolve(),"--memory-pipe" in sys.argv[2:])
+    arguments = sys.argv[2:]
+    qwen = Path(arguments[arguments.index("--qwen") + 1]).resolve() if "--qwen" in arguments else None
+    main(Path(sys.argv[1]).resolve(), "--memory-pipe" in arguments, qwen)

@@ -7,12 +7,14 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QFormLayout,
                                QLabel, QPushButton, QSpinBox, QTimeEdit)
 
 from tt_proactive import DEFAULTS, Scheduler
-from tt_proactive_voice import Voice
+from tt_proactive_voice import GAME_PAUSED_STATUS, Voice
 from tt_voice_profiles import add_settings, prepare_db, with_reference
 from tt_live_reply import LiveReply
 from tt_natural_speech import STYLES
 from tt_avatar import DECLARED_DELIVERY, reply_delivery, requested_style
 from tt_media_share import MediaShare
+from tt_share_content import music_reply
+from tt_multilingual import RECOGNITION_READ_RULE, direct_read_text, recognition_read_text, speech_language
 
 
 def install_voice(base):
@@ -114,7 +116,7 @@ def install_voice(base):
             self.pro_voice.stop()
 
         def pro_voice_state(self, status):
-            if status.startswith('失败') and self.pro_live:
+            if (status.startswith('失败') or status == GAME_PAUSED_STATUS) and self.pro_live:
                 self.pro_live.stop()
 
         def pro_activity(self):
@@ -125,16 +127,26 @@ def install_voice(base):
             if self.input.hasFocus():
                 self.pro_voice_warm_timer.start()
 
+        def showEvent(self, event):
+            super().showEvent(event)
+            if hasattr(self, 'tabs') and self.tabs.currentIndex() == 0:
+                self.pro_prepare_reply_voice()
+
         def pro_prepare_draft_voice(self):
+            if self.input.hasFocus() and self.input.toPlainText().strip():
+                self.pro_prepare_reply_voice()
+
+        def pro_prepare_reply_voice(self):
             settings = self.pro_settings
-            if (self.input.hasFocus() and self.input.toPlainText().strip()
-                    and settings['speech_enabled'] and settings['reply_voice'] and not settings['muted']
+            if (settings['speech_enabled'] and settings['reply_voice'] and not settings['muted'] and settings['volume']
                     and self.pro_voice.player.process is None):
                 self.pro_warm_reply_voice(with_reference(self.db, settings))
 
         def pro_warm_reply_voice(self, settings):
             try:
-                self.pro_voice.player.warmup(settings.get('voice_reference'))
+                self.pro_voice.warmup(settings.get('voice_reference'))
+                if self.pro_voice.game_paused and self.pro_live:
+                    self.pro_live.stop()
             except (OSError, RuntimeError):
                 pass  # The real speech request reports any worker startup failure.
 
@@ -155,6 +167,9 @@ def install_voice(base):
                         automatic_chat_delivery=automatic)
 
         def pro_stream_piece(self, phrase, live, reply):
+            phrase = music_reply(phrase, streaming=True)[0]
+            if not phrase:
+                return
             if live.delivery is None:
                 live.delivery = self.resolve_reply_delivery(self.pending_prompt, reply)
             settings = self.speech_delivery_settings(live.settings, live.delivery, reply_prompt=self.pending_prompt)
@@ -174,6 +189,7 @@ def install_voice(base):
             if not regenerate and self.pro_voice.reply_turn == reply_turn and self.pro_voice.active:
                 self.status.setText('这条语音正在生成或播放。')
                 return
+            text = recognition_read_text(text)
             row = self.db.execute(
                 'SELECT t.prompt, e.emotion FROM turns t LEFT JOIN tt_reply_emotion e ON e.turn_id=t.id '
                 'WHERE t.id=? AND t.account=? AND t.session=?',
@@ -202,11 +218,20 @@ def install_voice(base):
                 self.pro_stop_speech()
                 self.pro_live = None
                 settings = with_reference(self.db, self.pro_settings)
+                recognition = getattr(self, 'recognition', None)
+                reading_requested = recognition and recognition.reading_requested(self.pending_id)
+                if reading_requested:
+                    worker.payload['instructions'] += '\n' + RECOGNITION_READ_RULE
+                if not reading_requested and not self.pending_images:
+                    worker.read_aloud_text = direct_read_text(self.pending_request or self.pending_prompt)
                 if (settings['speech_enabled']
                         and settings['reply_voice'] and not settings['muted']
+                        and not reading_requested
+                        and not getattr(worker, 'read_aloud_text', '')
                         and self.pending_id is not None):
                     self.pro_live = LiveReply((self.session, self.pending_id), settings)
-                    self.pro_warm_reply_voice(settings)
+                    if speech_language(self.pending_prompt) not in ('ja', 'ko'):
+                        self.pro_warm_reply_voice(settings)
             return super().start_worker(worker)
 
         def add_delta(self, text):
@@ -242,17 +267,22 @@ def install_voice(base):
                 self.pro_speech_serial += 1
                 # The completion signal is emitted before save_result clears this ID.
                 turn_id = getattr(self, 'pending_id', None)
+                recognition = getattr(self, 'recognition', None)
+                requested_read = recognition and recognition.take_read(turn_id)
+                explicit_read = bool(getattr(getattr(self, 'worker', None), 'read_aloud_text', ''))
                 live = self.pro_live
-                if live and live.turn == (self.session, turn_id):
+                if live and live.turn == (self.session, turn_id) and not (requested_read or explicit_read):
                     tail = live.finish(text)
                     if tail:
                         self.pro_stream_piece(tail, live, text)
                     return
+                if requested_read:
+                    text = recognition_read_text(text)
                 settings = with_reference(self.db, self.pro_settings)
                 prompt = getattr(self, 'pending_prompt', '') if turn_id is not None else ''
                 settings = self.speech_delivery_settings(
                     settings, self.resolve_reply_delivery(prompt, text), reply_prompt=prompt)
-                self.pro_voice.play(text, settings, 'reply',
+                self.pro_voice.play(text, settings, 'replay' if requested_read or explicit_read else 'reply',
                                     ('reply', self.session, 'turn', turn_id) if turn_id is not None
                                     else ('reply', self.session, 'event', self.pro_speech_serial),
                                     reply_turn=(self.session, turn_id) if turn_id is not None else None)
@@ -314,20 +344,25 @@ def install_voice(base):
             def changed(key, value):
                 self.pro_settings[key] = value
                 self.pro_stop_speech()
+                if key == 'pause_voice_in_games':
+                    self.pro_voice.apply_game_preference()
                 if key in ('enabled', 'dnd', 'start', 'end', 'dnd_start', 'dnd_end'):
                     self.media.cancel()
                 if key in ('speech_enabled', 'reply_voice', 'voice', 'muted', 'volume',
                            'rate', 'voice_name', 'speech_style',
-                           'emotion_strength', 'fast_speech'):
+                           'emotion_strength', 'fast_speech', 'pause_voice_in_games'):
                     self.save_proactive()
                 else:
                     self.pro_scheduler.defer(time.time())
 
             for key, label in (('enabled', '允许 TT 主动聊天'), ('speech_enabled', '语音总开关'),
                                ('reply_voice', '普通回复朗读'), ('voice', '主动消息语音播报（会播放声音）'),
+                               ('pause_voice_in_games', '游戏中暂停语音并释放显存'),
                                ('muted', '应用内静音'), ('dnd', '立即免打扰'),
                                ('fast_speech', '快速合成（语气可能略有变化）')):
                 widget = QCheckBox(label)
+                if key == 'pause_voice_in_games':
+                    widget.setToolTip('识别游戏后停止合成和播放并卸载本地模型。切出游戏仍保持暂停，游戏退出后恢复。')
                 widget.setChecked(self.pro_settings[key])
                 widget.toggled.connect(lambda value, k=key: changed(k, value))
                 form.addRow(widget)

@@ -5,13 +5,16 @@ from math import ceil
 import re
 
 from PySide6.QtCore import QEvent, QSize, Qt, QTimer, QUrl, Signal
-from PySide6.QtGui import QAction, QColor, QDesktopServices, QFont, QFontMetrics, QTextCursor, QTextDocument, QTextFormat, QTextOption
+from PySide6.QtGui import QAction, QColor, QDesktopServices, QFont, QFontMetrics, QPixmap, QTextCursor, QTextDocument, QTextFormat, QTextOption
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy,
     QStackedWidget, QTextBrowser, QVBoxLayout, QWidget,
 )
 from tt_theme import LIGHT
-from tt_media_share import MediaCard
+from tt_chat_images import IMAGE_NOTE, decode_previews
+from tt_edge_research import NO_WEB
+from tt_media_share import MediaCard, decode_media_previews
+from tt_share_content import links_in_message
 
 
 PARAGRAPH_BREAK = re.compile(r'\n[ \t]*\n+')
@@ -92,7 +95,7 @@ class MessageRow(QFrame):
     part_shown = Signal()
 
     def __init__(self, turn, created, assistant, body, room, *, streaming=False, can_retry=False,
-                 split=False, paced=False):
+                 split=False, paced=False, images=()):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         self.assistant = assistant
@@ -115,25 +118,39 @@ class MessageRow(QFrame):
         column.addWidget(self.sender)
         self.bodies = []
         self.body = self.add_bubble()
+        self.thumbnails = []
+        if images:
+            self.body.setVisible(bool(body.strip()))
+            bubble_layout = self.body.parentWidget().layout()
+            for number, image in enumerate(images, 1):
+                label = QLabel()
+                label.setAccessibleName(f'已发送的图片 {number}')
+                bubble_layout.addWidget(label, 0, Qt.AlignmentFlag.AlignLeft)
+                self.thumbnails.append((label, QPixmap.fromImage(image)))
         self.media_card = None
+        self.card_widgets = []
+        self.input_id = None
         self.remaining = []
         self.reveal_timer = None
-        if assistant:
+        if assistant or images or body.strip():
             self.action_bar = QWidget()
             self.action_bar.setObjectName('messageActions')
             self.action_bar.setProperty('active', False)
             actions = QHBoxLayout(self.action_bar)
             actions.setContentsMargins(0, 0, 0, 0)
             actions.setSpacing(2)
-            callbacks = [('复制', lambda: room.copy_reply(self.content)),
-                         ('朗读', lambda: room.read_reply(turn, self.content))]
+            callbacks = [('复制', lambda: room.copy_reply(self.content))] if assistant else []
+            if assistant or body.strip():
+                callbacks.append(('朗读', lambda: room.read_reply(turn, self.content)))
+            if images and not assistant:
+                callbacks.append(('识别并朗读图片', lambda: room.describe_images(images)))
             if can_retry:
                 callbacks.append(('重新生成', lambda: room.retry_turn(turn)))
             for label, callback in callbacks:
                 button = QPushButton(label)
                 button.setMinimumWidth(42)
                 button.clicked.connect(callback)
-                if label == '朗读':
+                if label == '朗读' and assistant:
                     button.setContextMenuPolicy(Qt.ContextMenuPolicy.ActionsContextMenu)
                     rerender = QAction('重新合成语音', button)
                     rerender.triggered.connect(lambda: room.read_reply(turn, self.content, regenerate=True))
@@ -166,9 +183,28 @@ class MessageRow(QFrame):
 
     def load_media_card(self):
         media = getattr(self.room, 'media', None)
-        if self.media_card is None and media and (item := media.card_for(self.turn)):
-            self.media_card = MediaCard(item, media)
-            self.stack.insertWidget(self.stack.indexOf(self.action_bar), self.media_card)
+        if self.media_card is None and media and (cards := media.cards_for(self.turn)):
+            self.render_cards(cards)
+
+    def render_cards(self, items):
+        for card in self.card_widgets:
+            self.stack.removeWidget(card)
+            card.hide()
+            card.deleteLater()
+        self.card_widgets = [MediaCard(item, self.room.media, outgoing=self.assistant) for item in items]
+        self.media_card = self.card_widgets[0] if self.card_widgets else None
+        for card in self.card_widgets:
+            if self.assistant:
+                alignment = Qt.AlignmentFlag.AlignLeft if card.kind != 'image' else Qt.AlignmentFlag(0)
+                self.stack.insertWidget(self.stack.indexOf(self.action_bar), card, 0, alignment)
+            else:
+                self.stack.addWidget(card, 0, Qt.AlignmentFlag.AlignRight)
+            card.set_width(self.column.width())
+        card_only = bool(self.card_widgets and not self.content.strip() and not self.thumbnails)
+        self.body.parentWidget().setVisible(not card_only)
+        if self.assistant:
+            for button in self.buttons:
+                button.setVisible(not card_only or button.text() == '重新生成')
 
     def add_bubble(self):
         bubble = QFrame()
@@ -222,12 +258,26 @@ class MessageRow(QFrame):
         preferred = min(710, max(238, round(available * (0.82 if self.assistant else 0.7))))
         if not self.assistant:
             ideal = QFontMetrics(self.body.document().defaultFont()).horizontalAdvance(self.content[:110]) + 40
+            if self.thumbnails:
+                ideal = max(ideal, min(300, max(pixmap.width() for _, pixmap in self.thumbnails)) + 24)
+            if self.card_widgets:
+                ideal = max(ideal, 360)
             preferred = min(preferred, max(132, ideal))
-        self.column.setFixedWidth(min(available, preferred))
+        width = min(available, preferred)
+        self.column.setFixedWidth(width)
+        for label, pixmap in self.thumbnails:
+            bounds = QSize(min(300, max(1, width - 24)), 220)
+            size = pixmap.size().scaled(bounds, Qt.AspectRatioMode.KeepAspectRatio)
+            if label.pixmap().isNull() or label.size() != size:
+                label.setPixmap(pixmap.scaled(size, Qt.AspectRatioMode.KeepAspectRatio,
+                                             Qt.TransformationMode.SmoothTransformation))
+                label.setFixedSize(size)
+        for card in self.card_widgets:
+            card.set_width(width)
 
     def highlight_actions(self):
         active = self.underMouse() or any(button.hasFocus() for button in self.buttons)
-        if self.assistant and self.action_bar.property('active') != active:
+        if hasattr(self, 'action_bar') and self.action_bar.property('active') != active:
             self.action_bar.setProperty('active', active)
             for button in self.buttons:
                 button.style().unpolish(button)
@@ -353,6 +403,7 @@ class ChatMessages(QStackedWidget):
 
     def add_record(self, record, index=None, *, paced=False):
         turn, created, prompt, answer, status = record
+        pending = status == 'pending' and turn == self.room.pending_id
         self.first_turn = turn if self.first_turn is None else min(turn, self.first_turn)
         self.setCurrentIndex(1)
         index = self.flow.count() if index is None else index
@@ -365,18 +416,22 @@ class ChatMessages(QStackedWidget):
             self.last_day = day
             index += 1
         if prompt:
-            inputs = self.room.db.execute('SELECT created,prompt FROM tt_turn_inputs WHERE turn_id=? ORDER BY rowid',
-                                          (turn,)).fetchall()
-            for sent_at, text in inputs or [(created, prompt)]:
-                self.add_row(index, MessageRow(turn, sent_at, False, text, self.room))
+            inputs = self.room.db.execute(
+                'SELECT rowid,created,prompt,image_previews,media_previews FROM tt_turn_inputs WHERE turn_id=? ORDER BY rowid',
+                (turn,),
+            ).fetchall()
+            for input_id, sent_at, text, previews, cards in inputs or [(None, created, prompt, None, None)]:
+                self.add_row(index, self.user_row(turn, input_id, sent_at, text, previews, cards, pending))
                 index += 1
-        pending = status == 'pending' and turn == self.room.pending_id
         if (pending or paced) and self.delivery_row:
             self.delivery_row.finish_parts()
             self.delivery_row = None
         if answer or prompt or pending:
             missing = 'TT 正在思考…' if pending else '已停止生成。' if status == 'stopped' else '这条回复未完成。'
-            row = MessageRow(turn, created, True, answer or missing, self.room,
+            media = getattr(self.room, 'media', None)
+            if not answer and not (status == 'completed' and media and media.card_for(turn)):
+                answer = missing
+            row = MessageRow(turn, created, True, answer, self.room,
                              streaming=pending, can_retry=bool(prompt),
                              split=status in ('completed', 'proactive'), paced=paced)
             row.part_shown.connect(self.maybe_follow)
@@ -393,9 +448,38 @@ class ChatMessages(QStackedWidget):
         reply = self.active_row
         if reply is None:
             return
-        self.add_row(self.flow.indexOf(reply), MessageRow(turn, created, False, prompt, self.room))
+        saved = self.room.db.execute(
+            'SELECT rowid,image_previews,media_previews FROM tt_turn_inputs WHERE turn_id=? ORDER BY rowid DESC LIMIT 1',
+            (turn,),
+        ).fetchone()
+        input_id, previews, cards = saved or (None, None, None)
+        self.add_row(self.flow.indexOf(reply), self.user_row(turn, input_id, created, prompt, previews, cards, True))
         self.rows.insert(self.rows.index(reply), self.rows.pop())
         self.set_reply('TT 正在重新思考…', True)
+
+    def user_row(self, turn, input_id, created, prompt, previews, saved_cards, fetch):
+        images = decode_previews(previews)
+        text = IMAGE_NOTE.sub('', prompt) if images else prompt
+        media = getattr(self.room, 'media', None)
+        cards = ()
+        if media:
+            text, candidates = links_in_message(text)
+            cards = decode_media_previews(saved_cards) or candidates
+        row = MessageRow(turn, created, False, text, self.room, images=images)
+        row.input_id = input_id
+        if cards:
+            row.render_cards(cards)
+            toggle = getattr(self.room, 'web_enabled', None)
+            if fetch and input_id is not None and not saved_cards and toggle and toggle.isChecked() and not NO_WEB.search(text):
+                media.load_card_previews((turn, input_id, created), cards)
+        return row
+
+    def refresh_media_cards(self, turn, input_id, cards):
+        for row in self.rows:
+            if row.turn == turn and (row.assistant if input_id is None else row.input_id == input_id):
+                row.render_cards(cards)
+                row.set_width(self.message_width())
+        self.maybe_follow()
 
     def add_row(self, index, row):
         self.rows.append(row)

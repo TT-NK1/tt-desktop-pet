@@ -58,9 +58,9 @@ class LiveReply:
     def finish(self, answer):
         if self.stopped:
             return ''
-        if answer.startswith(self.consumed):
-            return answer[len(self.consumed):].strip()
-        return self.tail.strip()
+        rest = answer[len(self.consumed):] if answer.startswith(self.consumed) else self.tail
+        self.stop()
+        return rest.strip()
 
     def stop(self):
         self.stopped = True

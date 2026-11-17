@@ -4,6 +4,7 @@ import ctypes
 from ctypes import wintypes
 from dataclasses import dataclass
 import json
+import os
 import time
 from pathlib import Path
 from uuid import uuid4
@@ -12,6 +13,7 @@ from PySide6.QtCore import QBuffer, QIODevice, QObject, QProcess, QProcessEnviro
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 
 from tt_indextts_resources import ROOT, FixedAudioCache, ResourceManager
+from tt_multilingual import QWEN_RUNTIME, chinese_speech_text, speech_sections
 from tt_natural_speech import STRENGTH, automatic_reaction, pause_after, style_for
 from tt_speech_segments import ChineseTextSegmenter, PauseController
 from tt_speech_wave import wav_edges
@@ -50,15 +52,18 @@ class IndexPlayback(QObject):
         self.cache,self.status,self.completed = cache,status,completed
         self.pending = deque()
         self.process = None
+        self.worker_backend = 'index'
         self.worker_ready = False
         self.worker_handle = None
         self.retiring = False
+        self.game_paused = False
         self.reference = ''
         self.free_vram = None
         self.idle_since = None
         self.output = bytearray()
         self.frame = None
         self.job = None
+        self.generation_started = 0.0
         self.cancelled = False
         self.buffered = None
         self.current = None
@@ -82,7 +87,9 @@ class IndexPlayback(QObject):
         self.gap = QTimer(self,singleShot=True)
         self.gap.timeout.connect(self.advance)
         self.timeout = QTimer(self,singleShot=True)
-        self.timeout.timeout.connect(lambda:self.fail("IndexTTS 生成超时，可重新点击朗读"))
+        self.timeout.timeout.connect(self.generation_timeout)
+        self.progress = QTimer(self, interval=1000)
+        self.progress.timeout.connect(self.report_generation)
         self.idle = QTimer(self,interval=20_000)
         self.idle.timeout.connect(self.check_resources)
 
@@ -92,12 +99,23 @@ class IndexPlayback(QObject):
                     or (self.job is not None and not self.cancelled))
 
     def play(self,text,settings):
-        self.idle_since = None
-        owner = self.cache/(uuid4().hex+".wav")
-        style = style_for(text,settings.get("speech_style","auto"))
+        if self.game_paused:
+            return
         segmenter = ChineseTextSegmenter()
         scene = settings.get("speech_scene", "chat")
         text = segmenter.normalize(text, scene)
+        sections = [(language, part) for language, part in speech_sections(text, segmenter)
+                    if language in ('zh', 'en', 'ja', 'ko')]
+        if not sections:
+            self.status('失败：TT 朗读支持中文、日语、韩语和英语。')
+            return
+        if (any(language in ('ja', 'ko') for language, _ in sections)
+                and not (QWEN_RUNTIME / 'model' / 'model.safetensors').is_file()):
+            self.status('失败：日语和韩语本地语音模型未安装。')
+            return
+        self.idle_since = None
+        owner = self.cache/(uuid4().hex+".wav")
+        style = style_for(text,settings.get("speech_style","auto"))
         scale = settings.get("developer_pause_scale", 1)
         options = dict(style=style,rate=settings.get("rate",0),
                        emotion_strength=settings.get("emotion_strength",STRENGTH),
@@ -106,15 +124,22 @@ class IndexPlayback(QObject):
             options["developer_pause_scale"] = scale
         if settings.get("developer_trace"):
             options["developer_trace"] = True
-        for part in segmenter.queue_blocks(text, responsive=scene in ('chat', 'reply')):
-            part_options = options
-            if settings.get("automatic_chat_delivery"):
-                part_style, strength = automatic_reaction(part, style, options["emotion_strength"])
-                part_options = dict(options, style=part_style, emotion_strength=strength)
-            self.pending.append(Clip(owner, part, settings.get("voice_reference", ""), part_options,
-                                     settings["volume"]/100, round(pause_after(part)*scale),
-                                     settings.get("avatar_mode"), scene in ('chat', 'reply'),
-                                     bool(settings.get('regenerate_speech'))))
+        for language, section in sections:
+            section_options = options
+            if language in ('ja', 'ko'):
+                section_options = dict(options, language=language,
+                                       reference_text=settings.get('voice_reference_text') or '')
+            elif language == 'zh':
+                section = chinese_speech_text(section)
+            for part in segmenter.queue_blocks(section, responsive=scene in ('chat', 'reply')):
+                part_options = section_options
+                if settings.get("automatic_chat_delivery"):
+                    part_style, strength = automatic_reaction(part, style, options["emotion_strength"])
+                    part_options = dict(section_options, style=part_style, emotion_strength=strength)
+                self.pending.append(Clip(owner, part, settings.get("voice_reference", ""), part_options,
+                                         settings["volume"]/100, round(pause_after(part)*scale),
+                                         settings.get("avatar_mode"), scene in ('chat', 'reply'),
+                                         bool(settings.get('regenerate_speech'))))
         self.advance()
         return owner
 
@@ -125,6 +150,8 @@ class IndexPlayback(QObject):
                 or any(clip.owner in paths for clip in self.pending))
 
     def warmup(self,reference):
+        if self.game_paused:
+            return
         if reference and Path(reference).is_file():
             self.reference = reference
             if not self.active and self.process is None and self.resources.allow_warmup():
@@ -134,7 +161,7 @@ class IndexPlayback(QObject):
         if self.process is None or self.active or self.job or self.retiring:
             return
         elapsed = time.monotonic()-self.idle_since if self.idle_since else 0
-        if self.resources.retire(elapsed,self.free_vram):
+        if (self.worker_backend == 'qwen' and elapsed >= 30) or self.resources.retire(elapsed,self.free_vram):
             self.retiring = True
             self.process.closeWriteChannel()
         elif self.worker_ready:
@@ -199,15 +226,24 @@ class IndexPlayback(QObject):
             self.buffered = clip,cached
             self.advance()
             return
+        backend = 'qwen' if clip.options.get('language') in ('ja', 'ko') else 'index'
+        if self.process is not None and self.worker_backend != backend:
+            self.pending.appendleft(clip)
+            self.retiring = True
+            self.process.closeWriteChannel()
+            if self.worker_handle:
+                self.kill_worker()
+            return
         identifier = uuid4().hex
         packet = dict(id=identifier,text=clip.text,reference=clip.reference,**clip.options)
         self.job = Job(clip,identifier,key,self.encode(packet),recent_key)
         self.cancelled = False
-        if self.current is None:
-            self.status("生成中" if self.worker_ready else "语音加载中：IndexTTS 2.0")
+        self.generation_started = time.monotonic()
         self.timeout.start(180_000)
+        self.progress.start()
+        self.report_generation()
         if self.process is None:
-            self.start_worker()
+            self.start_worker(backend)
         elif self.process.state()==QProcess.ProcessState.Running:
             self.send_request(self.process)
 
@@ -218,8 +254,21 @@ class IndexPlayback(QObject):
     def write(self,process,packet):
         return process.write(self.encode(packet))
 
-    def start_worker(self):
-        python = ROOT/".venv"/"Scripts"/"python.exe"
+    def report_generation(self):
+        if not self.job or self.cancelled or not self.timeout.isActive():
+            self.progress.stop()
+        elif self.current is None:
+            label = '语音合成中' if self.worker_ready else '正在加载 TT 本地音色'
+            elapsed = int(time.monotonic() - self.generation_started)
+            self.status(f'{label} · 已等待 {elapsed} 秒' if elapsed > 0 else label)
+
+    def generation_timeout(self):
+        phase = '合成语音' if self.worker_ready else '加载语音模型'
+        self.fail(f'{phase}超时，可重新点击朗读')
+
+    def start_worker(self, backend='index'):
+        configured = os.environ.get("TT_QWEN_PYTHON") if backend == "qwen" else None
+        python = Path(configured) if configured else ROOT / ".venv" / "Scripts" / "python.exe"
         if not python.is_file():
             if self.job:
                 self.finish("失败：IndexTTS 2.0 本地环境不可用，修复环境后可重试")
@@ -231,6 +280,7 @@ class IndexPlayback(QObject):
         self.free_vram = None
         process = QProcess(self)
         self.process = process
+        self.worker_backend = backend
         environment = QProcessEnvironment.systemEnvironment()
         for key,value in {
             "NLTK_DATA":ROOT/"nltk_data","HF_HOME":ROOT/"hf-cache",
@@ -239,6 +289,8 @@ class IndexPlayback(QObject):
         }.items():
             environment.insert(key,str(value))
         process.setProcessEnvironment(environment)
+        if backend == "qwen":
+            ROOT.mkdir(parents=True, exist_ok=True)
         process.setWorkingDirectory(str(ROOT))
         log = self.cache / "worker.log"
         try:
@@ -251,8 +303,11 @@ class IndexPlayback(QObject):
         process.readyReadStandardOutput.connect(lambda:self.read_response(process))
         process.errorOccurred.connect(lambda error:self.worker_error(process,error))
         process.finished.connect(lambda *_:self.worker_exited(process))
-        process.start(str(python),["-I","-B","-u","-X","utf8",
-                                  str(Path(__file__).with_name("tt_indextts_worker.py")),str(ROOT),"--memory-pipe"])
+        args = ["-I", "-B", "-u", "-X", "utf8",
+                str(Path(__file__).with_name("tt_indextts_worker.py")), str(ROOT), "--memory-pipe"]
+        if backend == 'qwen':
+            args.extend(("--qwen", str(QWEN_RUNTIME)))
+        process.start(str(python), args)
         if not self.idle.isActive():
             self.idle.start()
 
@@ -274,7 +329,7 @@ class IndexPlayback(QObject):
             self.fail("IndexTTS 后台连接中断，可重新点击朗读")
 
     def read_response(self,process):
-        if process is not self.process or self.retiring:
+        if process is not self.process or (self.retiring and self.worker_handle):
             return
         self.output.extend(bytes(process.readAllStandardOutput()))
         try:
@@ -300,7 +355,8 @@ class IndexPlayback(QObject):
                 del self.output[:length]
                 self.receive(response,data)
         except (ValueError,KeyError,TypeError):
-            self.fail("IndexTTS 返回的音频无效，可重新点击朗读")
+            if not self.retiring:
+                self.fail("IndexTTS 返回的音频无效，可重新点击朗读")
 
     def receive(self,response,data):
         if "worker_pid" in response:
@@ -309,15 +365,19 @@ class IndexPlayback(QObject):
                 open_process.argtypes = (wintypes.DWORD,wintypes.BOOL,wintypes.DWORD)
                 open_process.restype = wintypes.HANDLE
                 self.worker_handle = open_process(0x0001,False,response["worker_pid"])
+                if self.retiring and self.worker_handle:
+                    self.kill_worker()
+            return
+        if self.retiring:
             return
         if "free_mib" in response:
             self.free_vram = response["free_mib"]
             self.worker_ready = True
         if response.get("model_ready"):
             if self.job and not self.cancelled:
+                self.generation_started = time.monotonic()
                 self.timeout.start(180_000)
-                if self.current is None:
-                    self.status("生成中")
+                self.report_generation()
             return
         if response.get("warmup"):
             if not self.active:
@@ -330,6 +390,7 @@ class IndexPlayback(QObject):
         if not job or job.identifier!=response.get("id"):
             return
         self.timeout.stop()
+        self.progress.stop()
         self.job = None
         if self.cancelled or response.get("cancelled"):
             self.advance()
@@ -396,8 +457,7 @@ class IndexPlayback(QObject):
         if self.current and state==self.player.MediaStatus.EndOfMedia:
             self.boundary = time.monotonic(),self.current_pause,self.current_tail
             self.release_current()
-            if self.job:
-                self.status("生成中")
+            self.report_generation()
             self.advance()
 
     def playback_error(self,*_):
@@ -457,12 +517,29 @@ class IndexPlayback(QObject):
 
     def stop(self):
         self.gap.stop()
+        self.progress.stop()
         self.boundary = None
         self.pending.clear()
         self.cancel_job()
         self.buffered = None
         self.release_current()
         self.mark_idle()
+
+    def set_game_paused(self, paused):
+        if self.game_paused == paused:
+            return
+        self.game_paused = paused
+        if not paused:
+            return
+        self.stop()
+        self.timeout.stop()
+        self.job = None
+        if self.process is not None:
+            self.retiring = True
+            # Closing stdin also lets a worker which has yet to report its PID exit.
+            self.process.closeWriteChannel()
+            if self.worker_handle:
+                self.kill_worker()
 
     def shutdown(self):
         self.stop()

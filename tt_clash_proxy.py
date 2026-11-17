@@ -1,6 +1,7 @@
 """App-scoped direct and Clash routes for TT on Windows."""
 
 import atexit
+from contextlib import ExitStack
 import os
 from pathlib import Path
 import re
@@ -16,6 +17,7 @@ import time
 
 VERGE_FOLDER = 'io.github.clash-verge-rev.clash-verge-rev'
 RUNTIME_FILES = ('clash-verge.yaml', 'clash.yaml')
+PROXY_RUNTIME = Path(__file__).resolve().parent / 'runtime' / 'network'
 DATA_FILES = ('cache.db', 'Country.mmdb', 'ASN.mmdb', 'geoip.dat', 'geosite.dat', 'geoip.metadb')
 CONNECTION_PREFERENCE = 'network_connection'
 AUTO = 'auto'
@@ -171,29 +173,33 @@ class ClashRoutes:
             if source is None or core is None:
                 raise RouteError('TT 找不到已配置的 Clash Verge。请先打开 Clash Verge 并应用可用订阅。')
             password = secrets.token_urlsafe(24)
-            with socket.socket() as reservation:
-                reservation.bind(('127.0.0.1', 0))
-                port = reservation.getsockname()[1]
-                runtime = tempfile.TemporaryDirectory(prefix='tt-clash-')
+            with ExitStack() as runtime:
                 try:
-                    path = private_config(source, directory, Path(runtime.name), port, password)
+                    config_home = Path(runtime.enter_context(tempfile.TemporaryDirectory(prefix='tt-clash-')))
+                    PROXY_RUNTIME.mkdir(parents=True, exist_ok=True)
+                    binary_home = Path(runtime.enter_context(tempfile.TemporaryDirectory(
+                        prefix='proxy-', dir=PROXY_RUNTIME)))
+                    # Clash Verge looks for its own executable name. Give TT's
+                    # separate loopback proxy a distinct name and keep its subscription in user temp.
+                    executable = binary_home / 'tt-private-proxy.exe'
+                    shutil.copyfile(core, executable)
                     self.cancel_if_needed(cancelled)
-                except RouteError:
-                    runtime.cleanup()
-                    raise
+                    with socket.socket() as reservation:
+                        reservation.bind(('127.0.0.1', 0))
+                        port = reservation.getsockname()[1]
+                        path = private_config(source, directory, config_home, port, password)
                 except (OSError, ValueError) as exc:
-                    runtime.cleanup()
-                    raise RouteError('TT 无法准备独立代理的临时配置。') from exc
-            try:
-                process = subprocess.Popen(
-                    [str(core), '-d', runtime.name, '-f', str(path)],
-                    cwd=core.parent, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW,
-                )
-            except OSError as exc:
-                runtime.cleanup()
-                raise RouteError('TT 无法启动 Clash 的本地代理进程。') from exc
-            self.process, self.runtime = process, runtime
+                    raise RouteError('TT 无法准备独立代理的程序或配置。请检查应用目录和临时文件夹。') from exc
+                self.cancel_if_needed(cancelled)
+                try:
+                    process = subprocess.Popen(
+                        [str(executable), '-d', str(config_home), '-f', str(path)],
+                        cwd=config_home, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW,
+                    )
+                except OSError as exc:
+                    raise RouteError('TT 无法启动自己的本地代理进程。') from exc
+                self.process, self.runtime = process, runtime.pop_all()
             self.private_port = port
             self.private_proxy = f'http://tt:{password}@127.0.0.1:{port}'
             return process, self.private_proxy, port
@@ -212,7 +218,7 @@ class ClashRoutes:
             except ProcessLookupError:
                 pass
         if runtime is not None:
-            runtime.cleanup()
+            runtime.close()
 
     def close(self):
         with self.lock:

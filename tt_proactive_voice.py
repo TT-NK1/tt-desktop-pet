@@ -1,7 +1,12 @@
 """Desktop pet controls for local IndexTTS speech."""
 import re
 from collections import deque
+from PySide6.QtCore import QTimer
+from tt_game_activity import GameActivity
 from tt_speech_segments import ENTITIES
+
+
+GAME_PAUSED_STATUS = '游戏中，TT 语音已暂停'
 
 
 _FACE_LETTERS = frozenset("ωΩДд▽▼口益皿艸人ワヮㅂㅅㅜㅠᵕᴗᴖᴥᵔ๑ಠಥ눈ツシゝつづòóÒÓèéっッʕʔงوoOTQqUwuvVxX")
@@ -64,12 +69,20 @@ class Voice:
         self.player = IndexPlayback(parent, voice_directory().parent / 'cache' / 'indextts',
                                     self._status, lambda: None,
                                     on_playing=getattr(parent, 'avatar_speaking', None))
+        self.game_activity = GameActivity()
+        self.game_paused = False
+        self.game_timer = QTimer(parent, interval=1000)
+        self.game_timer.timeout.connect(self.check_game)
+        self.game_settings = getattr(parent, 'pro_settings', {})
+        self.apply_game_preference()
 
     @property
     def active(self):
         return self.player.active
 
     def _status(self, status):
+        if getattr(self, 'game_paused', False):
+            status = GAME_PAUSED_STATUS
         self.status = status
         for callback in self.listeners:
             callback(status)
@@ -80,7 +93,32 @@ class Voice:
         self._status('已停止')
 
     def shutdown(self):
+        if hasattr(self, 'game_timer'):
+            self.game_timer.stop()
+            self.game_activity.clear()
         self.player.shutdown()
+
+    def apply_game_preference(self):
+        if self.game_activity.supported and self.game_settings.get('pause_voice_in_games', True):
+            self.game_timer.start()
+        else:
+            self.game_timer.stop()
+            self.game_activity.clear()
+        self.check_game()
+
+    def check_game(self):
+        paused = self.game_timer.isActive() and self.game_activity.active()
+        if paused != self.game_paused:
+            self.game_paused = paused
+            if paused:
+                self.reply_turn = None
+            self.player.set_game_paused(paused)
+            self._status('语音待机')
+        return paused
+
+    def warmup(self, reference):
+        if not self.check_game():
+            self.player.warmup(reference)
 
     def play(self, text, settings, kind='proactive', message_id=None, *, reply_turn=None):
         if settings.get('muted') or not settings.get('speech_enabled', True):
@@ -100,6 +138,8 @@ class Voice:
             self._queue(text, settings, report_empty=False, reply_turn=reply_turn)
 
     def _queue(self, text, settings, *, report_empty=True, scene="chat", reply_turn=None):
+        if hasattr(self, 'game_timer') and self.check_game():
+            return
         text = spoken_text(text, keep_breaks=True)
         if not text:
             if report_empty:

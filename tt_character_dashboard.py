@@ -491,7 +491,7 @@ class CharacterDashboard(QFrame):
         elif playback == QMediaPlayer.PlaybackState.PausedState:
             voice_state = '已暂停'
         elif voice and voice.active:
-            voice_state = '正在合成'
+            voice_state = '加载模型' if voice.status.startswith('语音加载中') else '正在合成'
         elif settings.get('muted'):
             voice_state = '已静音'
         else:

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from PySide6.QtCore import QLockFile, QStandardPaths
+from PySide6.QtCore import QLibraryInfo, QLockFile, QStandardPaths, QTranslator
 from PySide6.QtWidgets import QApplication
 
 
@@ -29,6 +29,11 @@ def create_application(argv):
     # Reject duplicate launches before Qt initializes the desktop UI.
     try:
         app = QApplication(argv)
+        translator = QTranslator(app)
+        translations = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+        if translator.load("qtbase_zh_CN", translations):
+            app.installTranslator(translator)
+            app._tt_qt_translator = translator
     except BaseException:
         lock.unlock()
         raise
